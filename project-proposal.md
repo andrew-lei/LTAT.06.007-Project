@@ -1,15 +1,15 @@
-1. Title
+Title
 
-1. Team members
+# Team members
 
-1. A clear description of your idea
+# Idea description
 
-1. Initial related work or similar projects
+# Related work
 
-1. Workflow of your adopted approach
+# Workflow
 
-1. Workload distribution among team members
+# Workload distribution
 
-1. Your testing plan or strategy
+# Testing plan
 
-1. Link to repo
+# Repo
