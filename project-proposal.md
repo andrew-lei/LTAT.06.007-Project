@@ -15,7 +15,18 @@ date: 2018 September 20
 
 # Idea description
 
+* Peer-to-peer messaging
+* Use Estonian ID system for both identification and encryption
+* Pass messages to offline users by holding them with mutual friends
+
 # Related work
+
+* Signal
+    - End-to-end message encryption instead of peer-to-peer
+* Bitmessage
+    - Peer-to-peer, stores messages on P2P network
+    - Requires proof-of-work for anti-spam
+    - Proof-of-work less practical for sending messages on mobile devices
 
 # Workflow
 
