@@ -30,7 +30,25 @@ date: 2018 September 20
 
 # Workflow
 
+* October 11
+    - MVC
+    - Send/receive messages
+    - Encrypt/decrypt
+    - Verify identity
+* November 1
+    - Hold messages for peers
+    - Resend messages when user comes back online
+* November 22
+    - Make GUI for application
+* December 13
+    - Additional features
+    - Bug fixes
+    - Finishing touches
+
 # Workload distribution
+
+* Andrew Lei
+    - Encryption and verification
 
 # Testing plan
 
