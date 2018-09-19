@@ -4,7 +4,7 @@ author: Mattias Lass CS (Leader),
         Tambet Kaal CS,
         Andrew Lei CS,
         Jüri Gramann RCE
-date: 2018 September 20
+date: 20th September 2018
 ---
 
 # Team members
