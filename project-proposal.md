@@ -1,17 +1,17 @@
 ---
 title: Encrypted P2P Messaging Using EID
-author: Mattias Lass CS (Leader),
-        Tambet Kaal CS,
-        Andrew Lei CS,
-        Jüri Gramann RCE
+author: Jüri Gramann, 
+        Tambet Kaal, 
+        Mattias Lass, 
+        Andrew Lei
 date: 20th September 2018
 ---
 
 # Team members
-* Mattias Lass CS (Leader)
-* Tambet Kaal CS
-* Andrew Lei CS
 * Jüri Gramann RCE
+* Tambet Kaal CS
+* Mattias Lass CS (Leader)
+* Andrew Lei CS
 
 # Idea description
 
