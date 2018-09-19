@@ -15,9 +15,10 @@ date: 20th September 2018
 
 # Idea description
 
-* Peer-to-peer messaging
-* Use Estonian ID system for both identification and encryption
+* Encrypted peer-to-peer messaging
+* Uses Estonian ID system for both identification and encryption
 * Pass messages to offline users by holding them with mutual friends
+* Designated servers that pass messages to offline peers
 
 # Related work
 
