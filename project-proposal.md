@@ -47,9 +47,14 @@ date: 20th September 2018
     - Testing/Polishing/Bug fixes
 
 # Workload distribution
-
+* Jüri Gramann
+    - Peer finding, (indirect) message sending
+* Tambet Kaal
+    - EID Integration, GUI
+* Mattias Lass
+    - Designated servers, GUI
 * Andrew Lei
-    - Encryption and verification
+    - Encryption/verification, indirect message sending
 
 # Testing plan
 
