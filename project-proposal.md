@@ -87,6 +87,12 @@ date: 20th September 2018
     - Encryption/verification, indirect message sending
 
 # Testing plan
+* Security
+    - Messages can't be tampered with
+* Reliability
+    - Messages reach destination
+* Performance
+    - System must work correctly under load
 
 # Repo
 
