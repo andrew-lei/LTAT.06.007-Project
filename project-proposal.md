@@ -21,13 +21,43 @@ date: 20th September 2018
 * Designated servers that pass messages to offline peers
 
 # Related work
-
+* Tox
+    - Peer-to-peer distributed messaging protocol
+    - Public-private key associated with device
+    - End-to-end encrypted with forward secrecy
+    - Can not disable the encryption features
+    - Supports voice and video
+    - No offline messages
+* Telegram
+    - Cloud-based 
+    - Supports audio and video
+    - Client open-source, server closed-source
+    - Stores contacts, messages and media with decryption keys on servers
+    - Uses custom designed encryption protocol
+    - Accounts are tied to telephone numbers
 * Signal
-    - End-to-end message encryption instead of peer-to-peer
+    - Encrypted communcation application
+    - Relies on centralized servers
+    - Some functions peer-to-peer
+    - Supports audio, video and file sharing
+    - Telephone numbers used as identifiers
+    - Generated keys stored in endpoints (users' devives)
+    - Local message databases can be encrypted
+    - Allows users to set timers to messages
 * Bitmessage
     - Peer-to-peer, stores messages on P2P network
+    - Encrypts user's inbox using public-key cryptography
+    - Replicates users' inboxes inside the peer-to-peer network
+    - Messages don't contain address of the recipient
+    - Nodes store encrypted messages for two days
     - Requires proof-of-work for anti-spam
     - Proof-of-work less practical for sending messages on mobile devices
+* Retroshare
+    - Instant messaging and file sharing network
+    - Uses distributed hash table for address discovery
+    - Friend-to-firend network
+    - Uses indirect communication through mutual friends and direct connections
+    - Supports voice and video
 
 # Workflow
 
