@@ -33,18 +33,18 @@ date: 20th September 2018
 
 * October 11
     - MVC
-    - Send/receive messages
-    - Encrypt/decrypt
-    - Verify identity
+    - Basic GUI
+    - Sending messages over TCP + finding peers
 * November 1
-    - Hold messages for peers
-    - Resend messages when user comes back online
+    - Functional GUI
+    - Encryption using EID
 * November 22
-    - Make GUI for application
+    - Holding unsent messages for friendly peers
+    - Designated message holding servers
+    - GUI design
 * December 13
-    - Additional features
-    - Bug fixes
-    - Finishing touches
+    - Additional features (E.g group chat)
+    - Testing/Polishing/Bug fixes
 
 # Workload distribution
 
