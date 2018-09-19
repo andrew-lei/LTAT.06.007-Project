@@ -28,6 +28,8 @@ date: 20th September 2018
     - Can not disable the encryption features
     - Supports voice and video
     - No offline messages
+
+# Related work
 * Telegram
     - Cloud-based 
     - Supports audio and video
@@ -35,6 +37,8 @@ date: 20th September 2018
     - Stores contacts, messages and media with decryption keys on servers
     - Uses custom designed encryption protocol
     - Accounts are tied to telephone numbers
+
+# Related work
 * Signal
     - Encrypted communcation application
     - Relies on centralized servers
@@ -44,6 +48,8 @@ date: 20th September 2018
     - Generated keys stored in endpoints (users' devives)
     - Local message databases can be encrypted
     - Allows users to set timers to messages
+
+# Related work
 * Bitmessage
     - Peer-to-peer, stores messages on P2P network
     - Encrypts user's inbox using public-key cryptography
@@ -52,6 +58,8 @@ date: 20th September 2018
     - Nodes store encrypted messages for two days
     - Requires proof-of-work for anti-spam
     - Proof-of-work less practical for sending messages on mobile devices
+
+# Related work
 * Retroshare
     - Instant messaging and file sharing network
     - Uses distributed hash table for address discovery
