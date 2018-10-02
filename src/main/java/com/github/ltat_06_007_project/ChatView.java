@@ -12,6 +12,14 @@ public class ChatView extends VBox {
     private final TextArea output = new TextArea();
     private final TextField input = new TextField();
 
+    public TextArea getOutput() {
+        return output;
+    }
+
+    public TextField getInput() {
+        return input;
+    }
+
     public ChatView() {
         Platform.runLater(() -> createLayout());
     }
