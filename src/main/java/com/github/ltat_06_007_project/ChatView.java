@@ -26,6 +26,7 @@ public class ChatView extends VBox {
 
     private void createLayout() {
         getChildren().add(output);
+        output.setDisable(true);
         getChildren().add(input);
     }
 }
