@@ -36,13 +36,14 @@ public class MessageDatabase {
         }
     }
 
-    public void insertMessage(String message) {
+    public String insertMessage(String message) {
         String sql = "INSERT INTO message(content) VALUES(?)";
 
         try (var connection  = DriverManager.getConnection(databaseAddress);
              var preparedStatement = connection.prepareStatement(sql)){
             preparedStatement.setString(1, message);
             preparedStatement.executeUpdate();
+            return message;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

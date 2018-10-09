@@ -1,5 +1,6 @@
 package com.github.ltat_06_007_project;
 
+import com.github.ltat_06_007_project.Views.ChatView;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application {
 
 	@Override
 	public void start(Stage stage) {
+		stage.setTitle("EID IM");
 		stage.setScene(scene);
 		stage.show();
 	}
