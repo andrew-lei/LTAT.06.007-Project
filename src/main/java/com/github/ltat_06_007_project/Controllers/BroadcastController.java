@@ -1,6 +1,7 @@
 package com.github.ltat_06_007_project.Controllers;
 
 import com.github.ltat_06_007_project.Models.HostModel;
+import com.github.ltat_06_007_project.Models.MessageModel;
 import com.github.ltat_06_007_project.Objects.HostObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,10 +14,13 @@ import java.nio.charset.StandardCharsets;
 public class BroadcastController {
 
     private final HostModel hostModel;
+    private final MessageModel messageModel;
 
     @Autowired
-    public BroadcastController (HostModel hostModel) {
+    public BroadcastController (HostModel hostModel, MessageModel messageModel) {
         this.hostModel = hostModel;
+        this.messageModel = messageModel;
+
         Runnable listenToAdvertisements = () -> listenAdvertisements();
         Runnable sendAdvertisements = () -> broadcastAdvertisement();
         new Thread(listenToAdvertisements).start();
@@ -44,6 +48,8 @@ public class BroadcastController {
                     LanController.sendMessage(hostSocket, "HOSTNAME");
                     var host = new HostObject(new String(packet.getData()), ip, hostSocket);
                     hostModel.updateHost(host);
+                    MessageListenerController mlc = new MessageListenerController(hostname, hostSocket, messageModel);
+                    new Thread(mlc).start();
                 }
             } catch (IOException e) {
                 //TODO: handle
