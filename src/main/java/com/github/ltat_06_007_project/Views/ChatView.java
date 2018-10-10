@@ -50,9 +50,9 @@ public class ChatView extends VBox {
     private void sendMessage(){
         var message = chatController.addMessage(input.getText());
         input.clear();
-        output.appendText(System.lineSeparator() + message );
+        output.appendText(System.lineSeparator() + message.getContent());
     }
     private void loadOutput(){
-        chatController.getAllMessages().forEach(m -> output.appendText(System.lineSeparator() + m));
+        chatController.getAllMessages().forEach(m -> output.appendText(System.lineSeparator() + m.getContent()));
     }
 }

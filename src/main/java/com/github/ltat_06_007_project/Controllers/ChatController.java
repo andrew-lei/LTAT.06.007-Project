@@ -1,5 +1,6 @@
 package com.github.ltat_06_007_project.Controllers;
 
+import com.github.ltat_06_007_project.Message;
 import com.github.ltat_06_007_project.Models.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,11 @@ public class ChatController {
     }
 
 
-    public String addMessage(String message) {
-        return chatModel.insertMessage(message);
+    public Message addMessage(String content) {
+        return chatModel.insertMessage(new Message(content));
     }
 
-    public List<String> getAllMessages() {
+    public List<Message> getAllMessages() {
         return chatModel.getMessages();
     }
 }

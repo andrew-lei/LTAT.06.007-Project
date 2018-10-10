@@ -36,12 +36,12 @@ public class MessageDatabase {
         }
     }
 
-    public String insertMessage(String message) {
+    public Message insertMessage(Message message) {
         String sql = "INSERT INTO message(content) VALUES(?)";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
              var preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, message);
+            preparedStatement.setString(1, message.getContent());
             preparedStatement.executeUpdate();
             return message;
         } catch (SQLException e) {
@@ -49,16 +49,16 @@ public class MessageDatabase {
         }
     }
 
-    public List<String> getAllMessages() {
+    public List<Message> getAllMessages() {
         String sql = "SELECT * FROM message";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
             var resultSet = statement.executeQuery(sql);
 
-            List<String> allMessages = new ArrayList<>();
+            List<Message> allMessages = new ArrayList<>();
             while (resultSet.next()) {
-                allMessages.add(resultSet.getString("content"));
+                allMessages.add(new Message(resultSet.getString("content")));
             }
             return allMessages;
         } catch (SQLException e) {
