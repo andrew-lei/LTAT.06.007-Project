@@ -40,7 +40,6 @@ public class BroadcastController {
         while (!Thread.interrupted()) {
             try {
                 socket.receive(packet);
-                System.out.println("received broadcast");
                 String ip = packet.getAddress().getHostAddress();
                 String hostname = new String(packet.getData());
                 if (hostModel.getHostName(ip) != hostname){
@@ -76,7 +75,6 @@ public class BroadcastController {
         while (!Thread.interrupted()) {
             try {
                 socket.send(packet);
-                System.out.println("sent broadcast");
                 Thread.sleep(1000);
             } catch (IOException e) {
                 e.printStackTrace();
