@@ -17,14 +17,14 @@ public class BroadcastController {
     @Autowired
     public BroadcastController (HostModel hostModel) {
         this.hostModel = hostModel;
-        Runnable listenToAdvertisments = () -> listenAdvertisments();
-        Runnable sendAdvertisments = () -> broadcastAdvertisment();
-        new Thread(listenToAdvertisments).start();
-        new Thread(sendAdvertisments).start();
+        Runnable listenToAdvertisements = () -> listenAdvertisements();
+        Runnable sendAdvertisements = () -> broadcastAdvertisement();
+        new Thread(listenToAdvertisements).start();
+        new Thread(sendAdvertisements).start();
 
     }
 
-    public void listenAdvertisments()  {
+    public void listenAdvertisements()  {
         DatagramSocket socket;
         try {
             socket = new DatagramSocket(42069);
@@ -37,15 +37,21 @@ public class BroadcastController {
             try {
                 socket.receive(packet);
                 System.out.println("received broadcast");
-                var host = new HostObject(new String(packet.getData()), packet.getAddress().getHostAddress());
-                hostModel.updateHost(host);
+                String ip = packet.getAddress().getHostAddress();
+                String hostname = new String(packet.getData());
+                if (hostModel.getHostName(ip) != hostname){
+                    Socket hostSocket = new Socket(ip, 42069);
+                    LanController.sendMessage(hostSocket, "HOSTNAME");
+                    var host = new HostObject(new String(packet.getData()), ip, hostSocket);
+                    hostModel.updateHost(host);
+                }
             } catch (IOException e) {
                 //TODO: handle
             }
         }
     }
 
-    public void broadcastAdvertisment() {
+    public void broadcastAdvertisement() {
         DatagramSocket socket;
         try {
             socket = new DatagramSocket();
