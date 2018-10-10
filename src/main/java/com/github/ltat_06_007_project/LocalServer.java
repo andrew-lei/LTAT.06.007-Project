@@ -7,13 +7,13 @@ public class LocalServer {
     public int port;
     public ServerSocket serverSocket;
 
-    LocalServer(int port)throws Exception{
+    LocalServer(int port) throws Exception {
         this.port = port;
         this.serverSocket = new ServerSocket(port);
     }
 
     // Blocking function that waits for connections.
-    public LocalConnection accept() throws Exception{
+    public LocalConnection accept() throws Exception {
         return new LocalConnection(this.serverSocket.accept(), this.port);
     }
 }

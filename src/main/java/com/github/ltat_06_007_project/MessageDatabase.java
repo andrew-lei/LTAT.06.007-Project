@@ -14,21 +14,21 @@ public class MessageDatabase {
 
     private final String databaseAddress;
 
-    public MessageDatabase () {
+    public MessageDatabase() {
         try {
-            databaseAddress = "jdbc:sqlite:" + (new File(".")).getCanonicalPath() +  "/database.db";
+            databaseAddress = "jdbc:sqlite:" + (new File(".")).getCanonicalPath() + "/database.db";
             createNewDatabase();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void createNewDatabase(){
+    private void createNewDatabase() {
         String sql = "CREATE TABLE IF NOT EXISTS message ("
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
                 + " content text NOT NULL"
                 + ");";
-        try (var connection  = DriverManager.getConnection(databaseAddress);
+        try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
@@ -39,8 +39,8 @@ public class MessageDatabase {
     public String insertMessage(String message) {
         String sql = "INSERT INTO message(content) VALUES(?)";
 
-        try (var connection  = DriverManager.getConnection(databaseAddress);
-             var preparedStatement = connection.prepareStatement(sql)){
+        try (var connection = DriverManager.getConnection(databaseAddress);
+             var preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, message);
             preparedStatement.executeUpdate();
             return message;
@@ -49,12 +49,12 @@ public class MessageDatabase {
         }
     }
 
-    public List<String> getAllMessages(){
+    public List<String> getAllMessages() {
         String sql = "SELECT * FROM message";
 
-        try (var connection  = DriverManager.getConnection(databaseAddress);
+        try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
-            var resultSet    = statement.executeQuery(sql);
+            var resultSet = statement.executeQuery(sql);
 
             List<String> allMessages = new ArrayList<>();
             while (resultSet.next()) {

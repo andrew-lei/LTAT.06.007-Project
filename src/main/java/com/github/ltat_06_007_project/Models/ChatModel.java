@@ -20,7 +20,8 @@ public class ChatModel {
     public String insertMessage(String message) {
         return messageDatabase.insertMessage(message);
     }
-    public List<String> getMessages(){
+
+    public List<String> getMessages() {
         return messageDatabase.getAllMessages();
     }
 }

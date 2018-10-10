@@ -7,59 +7,55 @@ public class LocalConnection {
 
     public Socket socket;
     public InputStream inputStream;
-    public OutputStream outputStrem;
+    public OutputStream outputStream;
     public String host;
     public int port;
 
-    public LocalConnection(String host, int port){
+    public LocalConnection(String host, int port) {
         this.host = host;
         this.port = port;
         try {
             this.socket = new Socket(host, port);
             this.inputStream = this.socket.getInputStream();
-            this.outputStrem = this.socket.getOutputStream();
-        }
-        catch (Exception e){
+            this.outputStream = this.socket.getOutputStream();
+        } catch (Exception e) {
             // Should log error
         }
     }
 
-    public LocalConnection(Socket socket, int port){
+    public LocalConnection(Socket socket, int port) {
         this.socket = socket;
         this.host = socket.getInetAddress().getHostAddress();
         this.port = port;
         try {
             this.inputStream = socket.getInputStream();
-            this.outputStrem = socket.getOutputStream();
-        }
-        catch (Exception e){
+            this.outputStream = socket.getOutputStream();
+        } catch (Exception e) {
             // Should log error
         }
     }
 
     // Sends message that ends with \n.
-    public boolean sendMessage(String message){
-        try{
-            PrintWriter out = new PrintWriter(this.outputStrem, true);
+    public boolean sendMessage(String message) {
+        try {
+            PrintWriter out = new PrintWriter(this.outputStream, true);
             out.println(message);
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             // Should log error
             return false;
         }
     }
 
     // Checks if other host has sent a message
-    public boolean hasMessage() throws Exception{
-        if (this.inputStream.available() > 0){
+    public boolean hasMessage() throws Exception {
+        if (this.inputStream.available() > 0) {
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     // Reads received message.
-    public String readMessage() throws Exception{
+    public String readMessage() throws Exception {
         String message = "";
         while (this.inputStream.available() > 0) {
             BufferedReader in = new BufferedReader(new InputStreamReader(this.inputStream));
@@ -70,7 +66,7 @@ public class LocalConnection {
     }
 
     // Closes the connection.
-    public void close(){
+    public void close() {
         try {
             this.socket.close();
         } catch (IOException e) {
