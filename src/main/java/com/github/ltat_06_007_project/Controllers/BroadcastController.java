@@ -19,10 +19,20 @@ public class BroadcastController {
     @Autowired
     public BroadcastController (HostModel hostModel) {
         this.hostModel = hostModel;
+        Runnable listenToAdvertisments = () -> listenAdvertisments();
+        Runnable sendAdvertisments = () -> broadcastAdvertisment();
+        new Thread(listenToAdvertisments).start();
+        new Thread(sendAdvertisments).start();
+
     }
 
-    public void listenAdvertisments() throws SocketException {
-        var socket = new DatagramSocket(42069);
+    public void listenAdvertisments()  {
+        DatagramSocket socket;
+        try {
+            socket = new DatagramSocket(42069);
+        }catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
         var packet = new DatagramPacket(new byte[1024], 0, 0);
 
         while (!Thread.interrupted()) {
@@ -37,9 +47,14 @@ public class BroadcastController {
         }
     }
 
-    public void broadcastAdvertisment() throws SocketException {
-        var socket = new DatagramSocket(42069);
-        socket.setBroadcast(true);
+    public void broadcastAdvertisment() {
+        DatagramSocket socket;
+        try {
+            socket = new DatagramSocket(42069);
+            socket.setBroadcast(true);
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
         byte[] hostname = "HOSTNAME".getBytes(StandardCharsets.UTF_8);
         var packet = new DatagramPacket(hostname, hostname.length);
         while (!Thread.interrupted()) {
