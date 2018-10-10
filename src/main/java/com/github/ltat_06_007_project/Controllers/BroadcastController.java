@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 @Component
@@ -50,20 +48,26 @@ public class BroadcastController {
     public void broadcastAdvertisment() {
         DatagramSocket socket;
         try {
-            socket = new DatagramSocket(42069);
+            socket = new DatagramSocket();
             socket.setBroadcast(true);
         } catch (SocketException e) {
             throw new RuntimeException(e);
         }
         byte[] hostname = "HOSTNAME".getBytes(StandardCharsets.UTF_8);
         var packet = new DatagramPacket(hostname, hostname.length);
+        packet.setPort(42069);
+        try {
+            packet.setAddress(InetAddress.getByName("255.255.255.255"));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
         while (!Thread.interrupted()) {
             try {
                 socket.send(packet);
                 System.out.println("sent broadcast");
                 Thread.sleep(1000);
             } catch (IOException e) {
-                //TODO: handle
+                e.printStackTrace();
             } catch (InterruptedException e) {
                 break;
             }
