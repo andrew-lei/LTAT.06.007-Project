@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.Charset;
+import java.util.Set;
 
 @Component
 public class LanController {
@@ -26,16 +27,19 @@ public class LanController {
     }
 
     public  void multicastMessage(String message){
-        for (Socket socket : hostModel.getAllSockets()) {
-            sendMessage(socket, message);
+        hostModel.getAllIps();
+        for (String ip : hostModel.getAllIps()) {
+            sendMessage(ip, message);
         }
     }
 
-    public static void sendMessage(Socket socket, String message) {
+    public static void sendMessage(String ip, String message) {
         try {
+            Socket socket = new Socket(ip, 42069);
             OutputStream outputStream = socket.getOutputStream();
             PrintWriter printWriter = new PrintWriter(outputStream, true);
             printWriter.println(message);
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

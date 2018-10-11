@@ -27,6 +27,7 @@ public class MessageListenerController implements Runnable {
             InputStream inputStream = socket.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
             messageModel.updateMessages(host, bufferedReader.readLine());
+            socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
