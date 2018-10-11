@@ -28,6 +28,10 @@ date: 11th October 2018
     - Sending and recieving messages over TCP
     - Peer handling
 
+# Tambet
+    - MVC
+    - UI
+
 # Andrew
 ## Cryptography Model
 
