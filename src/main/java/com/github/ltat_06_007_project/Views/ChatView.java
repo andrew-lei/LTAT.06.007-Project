@@ -56,7 +56,7 @@ public class ChatView extends GridPane {
         var contactPane = new VBox();
         contactContainer.setMinWidth(150);
         var contactsLabel = new Label("Contacts");
-        contactsLabel.setStyle("-fx-background-color: lightgray");
+        contactsLabel.setStyle("-fx-background-color: white; -fx-font-size: 16;");
         contactsLabel.setPrefWidth(150);
         contactsLabel.setAlignment(Pos.TOP_CENTER);
         contactPane.prefHeightProperty().bind(contactContainer.heightProperty());
@@ -106,7 +106,7 @@ public class ChatView extends GridPane {
     private void sendMessage(){
         var message = chatController.addMessage(input.getText());
         input.clear();
-        var text = new Text(message);
+        var text = new Text(message.getContent());
         text.setFill(Color.WHITE);
         var textBox = new TextFlow(text);
         textBox.setStyle("-fx-background-color: #0099ff; -fx-border-radius: 5; -fx-background-radius:5; -fx-padding: 5; -fx-end-margin: 10");
@@ -117,7 +117,7 @@ public class ChatView extends GridPane {
     }
     private void loadOutput(){
         chatController.getAllMessages().forEach(m -> {
-            var message = new Text(m);
+            var message = new Text(m.getContent());
             message.setFill(Color.WHITE);
             var textBox = new TextFlow(message);
             textBox.setTextAlignment(TextAlignment.LEFT);
