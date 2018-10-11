@@ -9,28 +9,29 @@ date: 11th October 2018
 
 # Milestone 1
 ## Goals 
-    - MVC
-    - Basic GUI
-    - Sending messages over TCP + finding peers
+- MVC
+- Basic GUI
+- Sending messages over TCP + finding peers
+
 ## Actual work done 
-    - MVC
-    - Basic GUI
-    - Sending messages over TCP + finding peers in LAN
-    - Basic cryptography module
+- MVC
+- Basic GUI
+- Sending messages over TCP + finding peers in LAN
+- Basic cryptography module
 
 # Mattias
-    - Set up spring project
-    - Minimal UI
-    - Sqllite as database
-    - LAN peer finding
+- Set up spring project
+- Minimal UI
+- Sqllite as database
+- LAN peer finding
 
 # Jüri
-    - Sending and recieving messages over TCP
-    - Peer handling
+- Sending and recieving messages over TCP
+- Peer handling
 
 # Tambet
-    - MVC
-    - UI
+- MVC
+- UI
 
 # Andrew
 ## Cryptography Model
