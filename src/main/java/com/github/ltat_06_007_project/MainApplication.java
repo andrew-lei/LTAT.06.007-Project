@@ -11,28 +11,28 @@ import org.springframework.context.ConfigurableApplicationContext;
 @SpringBootApplication
 public class MainApplication extends Application {
 
-	private ConfigurableApplicationContext springContext;
-	private Scene scene;
+    private ConfigurableApplicationContext springContext;
+    private Scene scene;
 
-	public static void main(final String[] args){
-		launch(MainApplication.class, args);
-	}
+    public static void main(final String[] args) {
+        launch(MainApplication.class, args);
+    }
 
-	@Override
-	public void init() {
-		springContext = SpringApplication.run(MainApplication.class);
-		scene = new Scene(springContext.getBean(ChatView.class));
-	}
+    @Override
+    public void init() {
+        springContext = SpringApplication.run(MainApplication.class);
+        scene = new Scene(springContext.getBean(ChatView.class));
+    }
 
-	@Override
-	public void stop() {
-		springContext.stop();
-	}
+    @Override
+    public void stop() {
+        springContext.stop();
+    }
 
-	@Override
-	public void start(Stage stage) {
-		stage.setTitle("EID IM");
-		stage.setScene(scene);
-		stage.show();
-	}
+    @Override
+    public void start(Stage stage) {
+        stage.setTitle("EID IM");
+        stage.setScene(scene);
+        stage.show();
+    }
 }
