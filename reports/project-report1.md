@@ -1,11 +1,28 @@
 ---
-title: Encrypted P2P Messaging Using EID
+title: Encrypted P2P Messaging Using EID - report \#1
 author: Jüri Gramann, 
         Tambet Kaal, 
         Mattias Lass, 
         Andrew Lei
-date: 20th September 2018
+date: 11th October 2018
 ---
+
+# Milestone 1
+## Goals 
+    - MVC
+    - Basic GUI
+    - Sending messages over TCP + finding peers
+## Actual work done 
+    - MVC
+    - Basic GUI
+    - Sending messages over TCP + finding peers in LAN
+    - Basic cryptography module
+
+# Mattias
+    - Set up spring project
+    - Minimal UI
+    - Sqllite as database
+    - LAN peer finding
 
 # Cryptography Model
 
