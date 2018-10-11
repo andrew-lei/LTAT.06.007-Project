@@ -24,6 +24,10 @@ date: 11th October 2018
     - Sqllite as database
     - LAN peer finding
 
+# Jüri
+    - Sending and recieving messages over TCP
+    - Peer handling
+
 # Cryptography Model
 
 - Generate public/private key pair
