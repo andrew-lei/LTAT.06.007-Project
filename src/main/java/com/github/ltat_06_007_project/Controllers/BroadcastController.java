@@ -42,14 +42,15 @@ public class BroadcastController {
                 socket.receive(packet);
                 String ip = packet.getAddress().getHostAddress();
                 String hostname = new String(packet.getData());
+                var host = new HostObject(new String(packet.getData()), ip);
+                /*
                 if (hostModel.getHostName(ip) != hostname){
-                    Socket hostSocket = new Socket(ip, 42069);
-                    LanController.sendMessage(hostSocket, "HOSTNAME");
-                    var host = new HostObject(new String(packet.getData()), ip, hostSocket);
+                    LanController.sendMessage(ip,"HOSTNAME");
+                    var host = new HostObject(new String(packet.getData()), ip);
                     hostModel.updateHost(host);
-                    MessageListenerController mlc = new MessageListenerController(hostname, hostSocket, messageModel);
-                    new Thread(mlc).start();
                 }
+                */
+                hostModel.updateHost(host);
             } catch (IOException e) {
                 //TODO: handle
             }

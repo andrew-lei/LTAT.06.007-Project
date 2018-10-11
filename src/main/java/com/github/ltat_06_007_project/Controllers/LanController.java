@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.Charset;
-import java.util.Set;
 
 @Component
 public class LanController {
@@ -22,12 +20,11 @@ public class LanController {
         this.hostModel = hostModel;
         this.messageModel = messageModel;
 
-        Runnable listenToConnections = () -> listenToConnections();
-        new Thread(listenToConnections).start();
+        Runnable listenConnections = () -> listenConnections();
+        new Thread(listenConnections).start();
     }
 
-    public  void multicastMessage(String message){
-        hostModel.getAllIps();
+    public void multicastMessage(String message){
         for (String ip : hostModel.getAllIps()) {
             sendMessage(ip, message);
         }
@@ -45,20 +42,16 @@ public class LanController {
         }
     }
 
-    // Listens connections and receives HOSTNAME and saves it.
-    public void listenToConnections() {
+    // Listens for new connections connections
+    public void listenConnections() {
         try {
             ServerSocket serverSocket = new ServerSocket(42069);
             while (!Thread.interrupted()) {
                 Socket socket = serverSocket.accept();
-                System.out.println("Received a new connection");
-                BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                String hostName = reader.readLine();
-                HostObject host = new HostObject(hostName,
-                        socket.getInetAddress().toString().replace("/", ""), socket);
-                hostModel.updateHost(host);
-                MessageListenerController mlc = new MessageListenerController(hostName, socket, messageModel);
-                new Thread(mlc).start();
+                System.out.println(hostModel.getAllIps().toString());
+                MessageListenerController messageListenerController
+                        = new MessageListenerController(socket, messageModel);
+                new Thread(messageListenerController).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
