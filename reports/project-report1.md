@@ -28,14 +28,14 @@ date: 11th October 2018
     - Sending and recieving messages over TCP
     - Peer handling
 
-# Cryptography Model
+# Andrew
+## Cryptography Model
 
 - Generate public/private key pair
 - Use EID to sign public key
 - Distribute public key - others can verify it against your ID
 - Others use key to encrypt messages to send you
 
-# Pros/Cons
 ## Advantages
 
 - Don't need cardreader on device all the time, only when generating key
@@ -46,7 +46,8 @@ date: 11th October 2018
 
 - Key could be stolen from device
 
-# Implemented so far
+# Andrew
+## Implemented so far
 
 - Generate key pair
 - Sign public key with DigiDoc in test mode
