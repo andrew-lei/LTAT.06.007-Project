@@ -4,8 +4,8 @@ import com.github.ltat_06_007_project.Models.HostModel;
 import com.github.ltat_06_007_project.Models.MessageModel;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class MessageListenerController implements Runnable {
     private final MessageModel messageModel;
@@ -21,12 +21,15 @@ public class MessageListenerController implements Runnable {
     public void run() {
         try {
             InputStream inputStream = socket.getInputStream();
+            byte[] messageBuffer = new byte[1024];
+            int bytes;
 
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String message = bufferedReader.readLine();
-            System.out.println("From: " + socket.getInetAddress().toString() + " Message: " + message);
-            messageModel.updateMessages(
-                    socket.getInetAddress().toString().replace("/", ""), message);
+            while ((bytes = inputStream.read(messageBuffer)) != -1){
+                byte[] message = Arrays.copyOf(messageBuffer, bytes);
+                messageModel.updateMessages(
+                        socket.getInetAddress().toString().replace("/", ""), message);
+                System.out.println("From: " + socket.getInetAddress().toString() + " Message: " + new String(message));
+            }
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -42,6 +42,16 @@ public class LanController {
         }
     }
 
+    public static void sendMessage(String ip, byte[] message) {
+        try {
+            Socket socket = new Socket(ip, 42069);
+            OutputStream outputStream = socket.getOutputStream();
+            outputStream.write(message);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     // Listens for new connections connections
     public void listenConnections() {
         try {
