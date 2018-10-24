@@ -46,7 +46,7 @@ date: 20th September 2018
     - Supports audio, video and file sharing
     - Telephone numbers used as identifiers
     - Generated keys stored in endpoints (users' devives)
-    - Local message databases can be encrypted
+    - Local messageObject databases can be encrypted
     - Allows users to set timers to messages
 
 # Related work
@@ -78,7 +78,7 @@ date: 20th September 2018
     - Encryption using EID
 * November 22
     - Holding unsent messages for friendly peers
-    - Designated message holding servers
+    - Designated messageObject holding servers
     - GUI design
 * December 13
     - Additional features (E.g group chat)
@@ -86,13 +86,13 @@ date: 20th September 2018
 
 # Workload distribution
 * Jüri Gramann
-    - Peer finding, (indirect) message sending
+    - Peer finding, (indirect) messageObject sending
 * Tambet Kaal
     - EID Integration, GUI
 * Mattias Lass
     - Designated servers, GUI
 * Andrew Lei
-    - Encryption/verification, indirect message sending
+    - Encryption/verification, indirect messageObject sending
 
 # Testing plan
 * Security

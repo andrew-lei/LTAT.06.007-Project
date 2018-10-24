@@ -1,6 +1,6 @@
 package com.github.ltat_06_007_project.Models;
 
-import com.github.ltat_06_007_project.Message;
+import com.github.ltat_06_007_project.Objects.MessageObject;
 import com.github.ltat_06_007_project.MessageDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,11 +18,11 @@ public class ChatModel {
         this.messageDatabase = messageDatabase;
     }
 
-    public Message insertMessage(Message content) {
+    public MessageObject insertMessage(MessageObject content) {
         return messageDatabase.insertMessage(content);
     }
 
-    public List<Message> getMessages() {
+    public List<MessageObject> getMessages() {
         return messageDatabase.getAllMessages();
     }
 }
