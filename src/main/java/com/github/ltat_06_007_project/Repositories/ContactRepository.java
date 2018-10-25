@@ -28,9 +28,9 @@ public class ContactRepository {
     private void createNewDatabase() {
         String sql = "CREATE TABLE IF NOT EXISTS contact ("
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
-                + " text identificationCode NOT NULL UNIQUE,"
-                + " blob lastKey NOT NULL"
-                + " text lastAddress NOT NULL"
+                + " identificationCode text NOT NULL UNIQUE,"
+                + " lastKey blob NOT NULL,"
+                + " lastAddress text NOT NULL"
                 + ");";
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
