@@ -13,7 +13,7 @@ public class ContactObject {
     public byte[] getKey() {
         return key;
     }
-    public byte[] getIp) {
+    public String getIp) {
         return ip;
     }
 
