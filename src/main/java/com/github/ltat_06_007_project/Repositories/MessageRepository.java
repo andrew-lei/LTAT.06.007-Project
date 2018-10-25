@@ -1,4 +1,4 @@
-package com.github.ltat_06_007_project;
+package com.github.ltat_06_007_project.Repositories;
 
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import org.springframework.stereotype.Component;
@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MessageDatabase {
+public class MessageRepository {
 
     private final String databaseAddress;
 
-    public MessageDatabase() {
+    public MessageRepository() {
         try {
             databaseAddress = "jdbc:sqlite:" + (new File(".")).getCanonicalPath() + "/database.db";
             createNewDatabase();
