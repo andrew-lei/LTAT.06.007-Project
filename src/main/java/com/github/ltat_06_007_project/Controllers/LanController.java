@@ -2,7 +2,6 @@ package com.github.ltat_06_007_project.Controllers;
 
 import com.github.ltat_06_007_project.Models.HostModel;
 import com.github.ltat_06_007_project.Models.MessageModel;
-import com.github.ltat_06_007_project.Objects.HostObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

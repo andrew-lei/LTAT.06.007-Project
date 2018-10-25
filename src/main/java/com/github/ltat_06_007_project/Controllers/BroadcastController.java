@@ -2,7 +2,7 @@ package com.github.ltat_06_007_project.Controllers;
 
 import com.github.ltat_06_007_project.Models.HostModel;
 import com.github.ltat_06_007_project.Models.MessageModel;
-import com.github.ltat_06_007_project.Objects.HostObject;
+import com.github.ltat_06_007_project.Objects.ConnectionObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,11 +42,11 @@ public class BroadcastController {
                 socket.receive(packet);
                 String ip = packet.getAddress().getHostAddress();
                 String hostname = new String(packet.getData());
-                var host = new HostObject(new String(packet.getData()), ip);
+                var host = new ConnectionObject(new String(packet.getData()), ip);
                 /*
                 if (hostModel.getHostName(ip) != hostname){
                     LanController.sendMessage(ip,"HOSTNAME");
-                    var host = new HostObject(new String(packet.getData()), ip);
+                    var host = new ConnectionObject(new String(packet.getData()), ip);
                     hostModel.updateHost(host);
                 }
                 */

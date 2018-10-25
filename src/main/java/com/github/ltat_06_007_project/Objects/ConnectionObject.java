@@ -1,11 +1,11 @@
 package com.github.ltat_06_007_project.Objects;
 
-public class HostObject {
+public class ConnectionObject {
     private String name;
     private String address;
 
 
-    public HostObject(String name, String address) {
+    public ConnectionObject(String name, String address) {
         this.name = name;
         this.address = address;
     }

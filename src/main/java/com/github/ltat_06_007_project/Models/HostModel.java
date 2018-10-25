@@ -1,10 +1,8 @@
 package com.github.ltat_06_007_project.Models;
 
-import com.github.ltat_06_007_project.Objects.HostObject;
+import com.github.ltat_06_007_project.Objects.ConnectionObject;
 import org.springframework.stereotype.Component;
 
-import java.net.Socket;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -13,7 +11,7 @@ public class HostModel {
 
     private final HashMap<String,String> hostIpToHostName = new HashMap<String, String>();
 
-    public void updateHost(HostObject host) {
+    public void updateHost(ConnectionObject host) {
         hostIpToHostName.put(host.getAddress(),host.getName());
     }
 
