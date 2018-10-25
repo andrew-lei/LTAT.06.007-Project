@@ -30,6 +30,7 @@ public class ContactRepository {
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
                 + " text identificationCode NOT NULL UNIQUE,"
                 + " blob lastKey NOT NULL"
+                + " text lastAddress NOT NULL"
                 + ");";
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
@@ -50,7 +51,8 @@ public class ContactRepository {
             while (resultSet.next()) {
                 String id = resultSet.getString("identificationCode");
                 byte[] key = resultSet.getBytes("lastKey");
-                allContacts.add(new ContactObject(id,key));
+                String address = resultSet.getString("lastAddress");
+                allContacts.add(new ContactObject(id,key,address));
             }
             return allContacts;
         } catch (SQLException e) {
