@@ -1,4 +1,4 @@
-package com.mycompany.crypto;
+package com.github.ltat_06_007_project;
 
 import java.security.*;
 import java.security.spec.*;
@@ -7,7 +7,7 @@ import java.nio.file.*;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 
-public class Crypto {
+public class Cryptography {
     public static void genKeyPair(String outFile) throws NoSuchAlgorithmException, IOException {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
         keyGen.initialize(2048);
@@ -31,11 +31,11 @@ public class Crypto {
     }
 
     public static PublicKey readPub(String filepath) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
-        /* Read all bytes from the private key file */
+        /* Read all bytes from the private key file*/
         Path path = Paths.get(filepath);
         byte[] bytes = Files.readAllBytes(path);
 
-        /* Generate private key. */
+        /* Generate private key.*/
         X509EncodedKeySpec ks = new X509EncodedKeySpec(bytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePublic(ks);
@@ -46,11 +46,11 @@ public class Crypto {
     }
 
     public static PrivateKey readKey(String filepath) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
-        /* Read all bytes from the private key file */
+        /* Read all bytes from the private key file*/
         Path path = Paths.get(filepath);
         byte[] bytes = Files.readAllBytes(path);
 
-        /* Generate private key. */
+        /* Generate private key.*/
         PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(bytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePrivate(ks);
