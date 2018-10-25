@@ -1,6 +1,13 @@
 package com.github.ltat_06_007_project.Objects;
 
 public class ConnectionObject {
+
+    enum ConnectionState {
+        DISABLED, DISCONNECTED, UNTRUSTED, UNSECURE, TRUSTED
+    }
+    private ContactObject contact;
+    private ConnectionState state = ConnectionState.DISABLED;
+    private String ip;
     private String name;
     private String address;
 
