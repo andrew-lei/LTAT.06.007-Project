@@ -4,13 +4,13 @@ import com.github.ltat_06_007_project.Objects.ContactObject;
 
 import java.io.IOException;
 
-public class TcpConnetcion {
+public class TcpConnection {
 
     private final ContactObject contact;
     private final ConnectionController connectionController;
 
 
-    public TcpConnetcion(ContactObject contact, ConnectionController connectionController) {
+    public TcpConnection(ContactObject contact, ConnectionController connectionController) {
         this.contact = contact;
         this.connectionController = connectionController;
     }

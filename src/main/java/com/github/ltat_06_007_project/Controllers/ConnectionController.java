@@ -1,12 +1,9 @@
 package com.github.ltat_06_007_project.Controllers;
 
 import com.github.ltat_06_007_project.Models.ContactModel;
-import com.github.ltat_06_007_project.Objects.ConnectionObject;
 import com.github.ltat_06_007_project.Objects.ContactObject;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -32,7 +29,7 @@ public class ConnectionController {
         Executor executor = Executors.newCachedThreadPool();
         while (!Thread.interrupted()) {
             try {
-                executor.execute(new TcpConnetcion(pendingConnections.take(), this)::establishConnection);
+                executor.execute(new TcpConnection(pendingConnections.take(), this)::establishConnection);
             } catch (InterruptedException e) {
                 break;
             }
