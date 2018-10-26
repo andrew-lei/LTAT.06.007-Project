@@ -44,6 +44,12 @@ public class ConnectionController {
         }
     }
 
+    void confirmContactConnection(String id) {
+        synchronized (disconnectedContactIdList) {
+            disconnectedContactIdList.removeIf(i -> i.equals(id));
+        }
+    }
+
     void addThread(Thread thread) {
         executor.execute(thread);
     }
@@ -67,7 +73,7 @@ public class ConnectionController {
         synchronized (disconnectedContactIdList) {
             disconnectedContactIdList.add(contactId);
             synchronized (idToConnection) {
-                Thread connectionThread = new Thread(new OutgoingTcpConnection(contactId, contactModel)::establishConnection);
+                Thread connectionThread = new Thread(new OutgoingTcpConnection(contactId, contactModel, this)::establishConnection);
                 executor.execute(connectionThread);
                 idToConnection.put(contactId,connectionThread);
             }
@@ -79,7 +85,7 @@ public class ConnectionController {
             Executor executor = Executors.newCachedThreadPool();
             try (var serverSocket = new ServerSocket(42069)) {
                 Socket socket = serverSocket.accept();
-                var client = new IncomingTcpConnection(socket, this);
+                new IncomingTcpConnection(socket, this, contactModel);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

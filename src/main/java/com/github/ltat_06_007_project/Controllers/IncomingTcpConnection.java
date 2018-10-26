@@ -1,21 +1,28 @@
 package com.github.ltat_06_007_project.Controllers;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
+import com.github.ltat_06_007_project.Models.ContactModel;
+import com.github.ltat_06_007_project.Objects.MessageObject;
+
+import java.io.*;
 import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
 
 class IncomingTcpConnection {
 
     private final Socket socket;
     private final ConnectionController connectionController;
+    private final ContactModel contactModel;
     private final Thread thread;
     private String id;
+    private boolean connectionTrusted = false;
+
+    private final LinkedBlockingQueue<MessageObject> messageQueue = new LinkedBlockingQueue<>();
 
 
-    IncomingTcpConnection(Socket socket, ConnectionController connectionController) {
+    IncomingTcpConnection(Socket socket, ConnectionController connectionController, ContactModel contactModel) {
         this.socket = socket;
         this.connectionController = connectionController;
+        this.contactModel = contactModel;
         thread = new Thread(this::connect);
         connectionController.addThread(thread);
     }
@@ -24,20 +31,31 @@ class IncomingTcpConnection {
 
         try {
             var inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            //TODO handle the connection
-            //Get their auth token
-            id = "";//from their auth token
-            //send your auth token
-            //start state sync state
-            connectionController.confirmContactConnection(thread,id);
-            //finish state sync
-            //get new private key
-            //keep connection open
+            var outputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            id = inputStream.readUTF();
+            if (contactModel.getById(id).getAllowed()) {
+                connectionController.confirmContactConnection(thread,id);
+                connectionTrusted = true;
+                outputStream.writeUTF("39412301337");
+            }
+
+
+            //TODO: sync states
+            //TODO: get new symmetric key
+            //TODO: start message listener thread
+            while (!Thread.interrupted()) {
+                try {
+                    outputStream.writeUTF(messageQueue.take().toString());
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
 
         } catch (IOException e) {
-            if (id != null) {
-                connectionController.allowContact(id);
-            }
+
+        }
+        if (connectionTrusted) {
+            connectionController.allowContact(id);
         }
     }
 
