@@ -9,4 +9,8 @@ public class ContactModel {
         //TODO
         return null;
     }
+
+    public ContactObject getById(String id) {
+        return null;
+    }
 }
