@@ -10,6 +10,8 @@ import org.digidoc4j.Signature;
 import org.digidoc4j.SignatureBuilder;
 import org.digidoc4j.signers.PKCS12SignatureToken;
 
+import org.digidoc4j.X509Cert.SubjectName;
+
 import java.io.IOException;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
@@ -17,6 +19,7 @@ import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.PrivateKey;
+import java.util.Scanner;
 import javax.crypto.SecretKey;
 
 import com.mycompany.crypto.Crypto;
@@ -31,30 +34,17 @@ public class App
 
             }
             else if (args[0].equals("signkey")) {
-                Configuration config = new Configuration(Mode.TEST);
-                //Create a container with two text files to be signed
-                Container container = ContainerBuilder.
-                    aContainer().
-                    withConfiguration(config).
-                    withDataFile("data/test.pub", "text/plain").
-                    build();
+                System.out.println("PIN:");
+                Scanner scanner = new Scanner(System.in);
+                String pin = scanner.nextLine();
+                Crypto.signKey("data/test.pub", "data/certificate.p12", pin.toCharArray(), "data/signed.pub");
+            }
+            else if (args[0].equals("readsignedpub")) {
+                Container container = Crypto.containerFromB64Bytes(Files.readAllBytes(Paths.get("data/signed.pub")));
+                System.out.println(new String(Crypto.getData(container)));
 
-                //Using the private key stored in the "signout.p12" file with password "test"
-                String privateKeyPath = "data/certificate.p12";
-                char[] password = "test".toCharArray();
-                PKCS12SignatureToken signatureToken = new PKCS12SignatureToken(privateKeyPath, password);
-                System.out.println(signatureToken);
-                //Create a signature
-                Signature signature = SignatureBuilder.
-                    aSignature(container).
-                    withSignatureToken(signatureToken).
-                    invokeSigning();
-                System.out.println(signature);
-                //Add the signature to the container
-                container.addSignature(signature);
-
-                //Save the container as a .bdoc file
-                container.saveAsFile("data/test-container.bdoc");
+                Signature signature = container.getSignatures().get(0);
+                System.out.println(signature.getSigningCertificate().getSubjectName(SubjectName.SURNAME));
             }
             else if (args[0].equals("encrypt")) {
                 PublicKey pub = Crypto.readPub("data/test.pub");

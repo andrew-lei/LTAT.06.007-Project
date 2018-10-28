@@ -4,8 +4,24 @@ import java.security.*;
 import java.security.spec.*;
 import java.io.*;
 import java.nio.file.*;
+import java.util.Base64;
+import java.util.ArrayList;
+import java.util.List;
 import javax.crypto.*;
 import javax.crypto.spec.*;
+import org.apache.commons.io.IOUtils;
+
+import org.digidoc4j.Configuration;
+import org.digidoc4j.Configuration.Mode;
+import org.digidoc4j.Container;
+import org.digidoc4j.ContainerBuilder;
+import org.digidoc4j.DataFile;
+import org.digidoc4j.DataToSign;
+import org.digidoc4j.Signature;
+import org.digidoc4j.SignatureBuilder;
+import org.digidoc4j.signers.PKCS11SignatureToken;
+import org.digidoc4j.X509Cert;
+import org.digidoc4j.X509Cert.SubjectName;
 
 public class Crypto {
     public static void genKeyPair(String outFile) throws NoSuchAlgorithmException, IOException {
@@ -79,5 +95,59 @@ public class Crypto {
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.DECRYPT_MODE, key);
         return cipher.doFinal(encText);
+    }
+
+    public static void signKey(String keyPath, String certPath, char[] password, String destPath) throws IOException {
+        Container container = ContainerBuilder.
+            aContainer().
+            withDataFile(keyPath, "text/plain").
+            build();
+
+        //Using the private key stored in the "signout.p12" file with password "test"
+        PKCS11SignatureToken signatureToken = new PKCS11SignatureToken(certPath, password, 0);
+
+        //Create a signature
+        Signature signature = SignatureBuilder.
+            aSignature(container).
+            withSignatureToken(signatureToken).
+            invokeSigning();
+
+        //Add the signature to the container
+        container.addSignature(signature);
+
+        //Save the container as a .bdoc file
+        byte[] signedKey = Base64.getEncoder().encode(
+            IOUtils.toByteArray(
+                container.saveAsStream()));
+
+        FileOutputStream outFile = new FileOutputStream(destPath);
+        outFile.write(signedKey);
+        outFile.close();
+    }
+
+    public static Container containerFromB64Bytes(byte[] input) {
+        Configuration config = new Configuration(Mode.TEST);
+        return ContainerBuilder.
+            aContainer().
+            withConfiguration(config).
+            fromStream(new ByteArrayInputStream(
+                        Base64.getDecoder().decode(input))).
+            build();
+    }
+
+    public static byte[] getData(Container container) {
+        return container.getDataFiles().get(0).getBytes();
+    }
+
+    public static List<String> getSignerInfo(Container container) {
+        List<String> retList = new ArrayList<String>();
+        Signature signature = container.getSignatures().get(0);
+        X509Cert certificate = signature.getSigningCertificate();
+
+        retList.add(certificate.getSubjectName(SubjectName.SERIALNUMBER));
+        retList.add(certificate.getSubjectName(SubjectName.SURNAME));
+        retList.add(certificate.getSubjectName(SubjectName.GIVENNAME));
+
+        return retList;
     }
 }
