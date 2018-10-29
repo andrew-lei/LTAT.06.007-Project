@@ -99,8 +99,16 @@ public class NetworkNodeController {
                     NetworkMessageWrapper message = outbox.take();
                     byte[] messageBytes = MainApplication.mapper.writeValueAsBytes(message);
                     var packet = new DatagramPacket(messageBytes, 0, messageBytes.length);
-                    socket.receive(packet);
-                    inbox.add(packet);
+                    for (String address: networkNodeAddressSet) {
+                        try {
+                            packet.setPort(42069);
+                            packet.setAddress(InetAddress.getByName(address));
+                            socket.send(packet);
+                            System.out.print("sent smth");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {
