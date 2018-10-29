@@ -1,5 +1,6 @@
 package com.github.ltat_06_007_project.Controllers;
 
+import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 
@@ -27,7 +28,7 @@ class OutgoingTcpConnection {
                 var inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                 var outputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-                outputStream.writeUTF("39412301337");
+                outputStream.writeUTF(MainApplication.userIdCode);
                 String response = inputStream.readUTF();
                 if (!response.equals(contactId)) {
                     continue;
@@ -54,6 +55,7 @@ class OutgoingTcpConnection {
                     break;
                 }
             }
+
 
         }
     }
