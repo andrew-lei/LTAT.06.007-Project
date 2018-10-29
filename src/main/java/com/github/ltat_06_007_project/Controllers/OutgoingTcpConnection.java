@@ -31,10 +31,11 @@ class OutgoingTcpConnection {
         while (!Thread.interrupted()) {
             try (var socket = new Socket(contactModel.getById(contactId).getIp(), 42069)) {
                 log.info("established connection with {}",socket.getInetAddress().getHostAddress());
-                var inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-                var outputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+                var inputStream = new DataInputStream(socket.getInputStream());
+                var outputStream = new DataOutputStream(socket.getOutputStream());
 
                 outputStream.writeUTF(MainApplication.userIdCode);
+                outputStream.flush();
                 String response = inputStream.readUTF();
                 if (!response.equals(contactId)) {
                     log.info("{} is not {}, dropping connection",socket.getInetAddress().getHostAddress(),contactId);

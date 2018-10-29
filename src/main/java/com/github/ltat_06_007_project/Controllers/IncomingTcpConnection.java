@@ -37,8 +37,8 @@ class IncomingTcpConnection {
     private void connect() {
 
         try {
-            var inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-            var outputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            var inputStream = new DataInputStream(socket.getInputStream());
+            var outputStream = new DataOutputStream(socket.getOutputStream());
             log.info("incoming TCP connection from {}",socket.getInetAddress().getHostAddress());
             id = inputStream.readUTF();
             log.info("{} is {}",socket.getInetAddress().getHostAddress(),id);
@@ -59,7 +59,7 @@ class IncomingTcpConnection {
             }
 
         } catch (IOException e) {
-
+            log.error("{}",e);
         }
         if (connectionTrusted) {
             connectionController.allowContact(id);
