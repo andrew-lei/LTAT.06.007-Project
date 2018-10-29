@@ -5,6 +5,8 @@ import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.NetworkMessage.ContactRequest;
 import com.github.ltat_06_007_project.NetworkMessage.NetworkMessageWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +18,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
 public class NetworkNodeController {
+
+    private static final Logger log = LoggerFactory.getLogger(NetworkNodeController.class);
 
     private final LinkedBlockingQueue<NetworkMessageWrapper> outbox = new LinkedBlockingQueue<>();
     private final LinkedBlockingQueue<DatagramPacket> inbox = new LinkedBlockingQueue<>();
@@ -45,7 +49,7 @@ public class NetworkNodeController {
                 try {
                     packet.setAddress(InetAddress.getByName("255.255.255.255"));
                     socket.send(packet);
-                    System.out.println("send broadcast");
+                    log.info("sent out broadcast");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -81,7 +85,8 @@ public class NetworkNodeController {
                 try {
                     var packet = new DatagramPacket(new byte[1024], 0, 1024);
                     socket.receive(packet);
-                    System.out.println("received something");
+
+                    log.info("received packet from {}", packet.getAddress().getHostAddress());
                     inbox.add(packet);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -104,7 +109,7 @@ public class NetworkNodeController {
                             packet.setPort(42069);
                             packet.setAddress(InetAddress.getByName(address));
                             socket.send(packet);
-                            System.out.print("sent smth");
+                            log.info("sent packet to {}", packet.getAddress().getHostAddress());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }

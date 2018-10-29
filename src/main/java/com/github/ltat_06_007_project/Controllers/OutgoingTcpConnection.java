@@ -3,6 +3,8 @@ package com.github.ltat_06_007_project.Controllers;
 import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.Objects.MessageObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.Socket;
@@ -15,6 +17,9 @@ class OutgoingTcpConnection {
     private final ConnectionController connectionController;
     private final LinkedBlockingQueue<MessageObject> messageQueue = new LinkedBlockingQueue<>();
 
+    private static final Logger log = LoggerFactory.getLogger(OutgoingTcpConnection.class);
+
+
 
     OutgoingTcpConnection(String contactId, ContactModel contactModel, ConnectionController connectionController) {
         this.contactId = contactId;
@@ -25,6 +30,7 @@ class OutgoingTcpConnection {
     void establishConnection() {
         while (!Thread.interrupted()) {
             try (var socket = new Socket(contactModel.getById(contactId).getIp(), 42069)) {
+                log.info("established connection with {} at ip {}",contactId,socket.getInetAddress().getHostAddress());
                 var inputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                 var outputStream = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
