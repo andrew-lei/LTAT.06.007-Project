@@ -32,6 +32,7 @@ public class ContactRepository {
                 + " lastKey blob NOT NULL,"
                 + " lastAddress text NOT NULL"
                 + ");";
+
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
             statement.execute(sql);
@@ -78,17 +79,22 @@ public class ContactRepository {
         String sql = "SELECT * FROM contact WHERE identificationCode = ?";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
-             var statement = connection.createStatement()) {
-            var resultSet = statement.executeQuery(sql);
+             var preparedStatement = connection.prepareStatement(sql)) {
 
-            resultSet.next();
-            String id = resultSet.getString("identificationCode");
-            byte[] key = resultSet.getBytes("lastKey");
-            String address = resultSet.getString("lastAddress");
-            return new ContactObject(id,key,address);
+            preparedStatement.setString(1, idCode);
+            var resultSet = preparedStatement.executeQuery();
+
+
+            if(resultSet.next()) {
+                String id = resultSet.getString("identificationCode");
+                byte[] key = resultSet.getBytes("lastKey");
+                String address = resultSet.getString("lastAddress");
+                return new ContactObject(id,key,address);
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        return null;
     }
 }
