@@ -16,8 +16,7 @@ public class ChatController {
     public ChatController(ChatModel chatModel) {
         this.chatModel = chatModel;
     }
-
-
+    
     public MessageObject addMessage(String content) {
         return chatModel.insertMessage(new MessageObject(content));
     }

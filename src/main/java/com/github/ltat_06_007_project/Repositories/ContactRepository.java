@@ -41,7 +41,7 @@ public class ContactRepository {
     }
 
     public List<ContactObject> getAll() {
-        String sql = "SELECT * FROM message";
+        String sql = "SELECT * FROM contact";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
@@ -60,4 +60,35 @@ public class ContactRepository {
         }
     }
 
+
+    public void updateIp(String idCode, String ipAddress) {
+        String sql = "UPDATE contact SET lastaddress = ? WHERE identificationCode = ?";
+        try (var connection = DriverManager.getConnection(databaseAddress);
+             var preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, ipAddress);
+            preparedStatement.setString(2, idCode);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public ContactObject getById(String idCode) {
+        String sql = "SELECT * FROM contact WHERE identificationCode = ?";
+
+        try (var connection = DriverManager.getConnection(databaseAddress);
+             var statement = connection.createStatement()) {
+            var resultSet = statement.executeQuery(sql);
+
+            resultSet.next();
+            String id = resultSet.getString("identificationCode");
+            byte[] key = resultSet.getBytes("lastKey");
+            String address = resultSet.getString("lastAddress");
+            return new ContactObject(id,key,address);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

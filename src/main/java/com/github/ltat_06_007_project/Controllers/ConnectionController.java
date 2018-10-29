@@ -1,22 +1,29 @@
 package com.github.ltat_06_007_project.Controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ContactModel;
+import com.github.ltat_06_007_project.NetworkMessage.ContactRequest;
+import com.github.ltat_06_007_project.NetworkMessage.NetworkMessageWrapper;
 import com.github.ltat_06_007_project.Objects.ContactObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;
 
+@Component
 public class ConnectionController {
 
     private final CopyOnWriteArrayList<String> disconnectedContactIdList = new CopyOnWriteArrayList<>();
     private final ConcurrentHashMap<String, Thread> idToConnection = new ConcurrentHashMap<>();
     private final Executor executor = Executors.newCachedThreadPool();
     private final ContactModel contactModel;
+    private final NetworkNodeController networkNodeController;
 
-    public void allowContact(String id) {
+    void allowContact(String id) {
         synchronized (disconnectedContactIdList) {
             if (disconnectedContactIdList.stream().noneMatch(i -> i.equals(id))) {
                 createConnection(id);
@@ -56,8 +63,9 @@ public class ConnectionController {
 
 
     @Autowired
-    public ConnectionController(ContactModel contactModel) {
+    public ConnectionController(ContactModel contactModel, NetworkNodeController networkNodeController) {
         this.contactModel = contactModel;
+        this.networkNodeController = networkNodeController;
 
         contactModel.getAll()
                 .stream()
@@ -82,7 +90,6 @@ public class ConnectionController {
 
     private void listenForConnections() {
         while (!Thread.interrupted()) {
-            Executor executor = Executors.newCachedThreadPool();
             try (var serverSocket = new ServerSocket(42069)) {
                 Socket socket = serverSocket.accept();
                 new IncomingTcpConnection(socket, this, contactModel);
@@ -95,14 +102,18 @@ public class ConnectionController {
     private void sendContactRequests() {
         while (!Thread.interrupted()) {
             synchronized (disconnectedContactIdList) {
-                for (String contactId : disconnectedContactIdList) {
-                    //TODO send out contact request
+                try {
+                    for (String contactId : disconnectedContactIdList) {
+                        ContactRequest contactRequest = new ContactRequest(MainApplication.userIdCode, contactId);
+                        String contactRequestSerialized = MainApplication.mapper.writeValueAsString(contactRequest);
+                        networkNodeController.addToOutbox(new NetworkMessageWrapper(1, contactRequestSerialized));
+                    }
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    break;
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
                 }
-            }
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                break;
             }
         }
     }

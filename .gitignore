@@ -18,3 +18,5 @@
 
 ### Database file ###
 database.db
+cert.pub
+cert.key

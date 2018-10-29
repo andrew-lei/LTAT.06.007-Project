@@ -8,20 +8,24 @@ import javax.crypto.*;
 import javax.crypto.spec.*;
 
 public class Cryptography {
-    public static void genKeyPair(String outFile) throws NoSuchAlgorithmException, IOException {
-        KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-        keyGen.initialize(2048);
-        KeyPair kp = keyGen.generateKeyPair();
-        byte[] publicKey = kp.getPublic().getEncoded();
-        byte[] privateKey = kp.getPrivate().getEncoded();
+    public static void genKeyPair(String outFile) throws IOException {
+        try {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048);
+            KeyPair kp = keyGen.generateKeyPair();
+            byte[] publicKey = kp.getPublic().getEncoded();
+            byte[] privateKey = kp.getPrivate().getEncoded();
 
-        FileOutputStream out = new FileOutputStream(outFile + ".key");
-        out.write(privateKey);
-        out.close();
+            FileOutputStream out = new FileOutputStream(outFile + ".key");
+            out.write(privateKey);
+            out.close();
 
-        out = new FileOutputStream(outFile + ".pub");
-        out.write(publicKey);
-        out.close();
+            out = new FileOutputStream(outFile + ".pub");
+            out.write(publicKey);
+            out.close();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static SecretKey genAESKey() throws NoSuchAlgorithmException {
@@ -30,30 +34,38 @@ public class Cryptography {
         return keyGen.generateKey();
     }
 
-    public static PublicKey readPub(String filepath) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+    public static PublicKey readPub(String filepath) throws IOException {
         /* Read all bytes from the private key file*/
         Path path = Paths.get(filepath);
         byte[] bytes = Files.readAllBytes(path);
 
         /* Generate private key.*/
         X509EncodedKeySpec ks = new X509EncodedKeySpec(bytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        return kf.generatePublic(ks);
+        try {
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePublic(ks);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static byte[] readPubBytes(String filepath) throws IOException {
         return Files.readAllBytes(Paths.get(filepath));
     }
 
-    public static PrivateKey readKey(String filepath) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+    public static PrivateKey readKey(String filepath) throws  IOException {
         /* Read all bytes from the private key file*/
         Path path = Paths.get(filepath);
         byte[] bytes = Files.readAllBytes(path);
 
         /* Generate private key.*/
         PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(bytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        return kf.generatePrivate(ks);
+        try {
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePrivate(ks);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static byte[] encryptSymKey(PublicKey pub, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
