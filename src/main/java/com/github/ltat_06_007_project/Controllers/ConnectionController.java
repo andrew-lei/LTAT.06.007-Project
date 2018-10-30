@@ -135,7 +135,10 @@ public class ConnectionController implements ApplicationContextAware {
 
     void sendMessage(MessageObject messageObject) {
         synchronized (idToConnection) {
-            idToConnection.get(messageObject.getContactId()).sendMessage(messageObject);
+            TcpConnection connection = idToConnection.get(messageObject.getContactId());
+            if (connection != null) {
+                connection.sendMessage(messageObject);
+            }
         }
     }
 
