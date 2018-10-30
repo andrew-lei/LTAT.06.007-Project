@@ -97,4 +97,21 @@ public class ContactRepository {
         }
         return null;
     }
+
+
+    public void insert(ContactObject contactObject) {
+        String sql = "INSERT INTO contact(identificationCode,lastAddress ,lastKey) VALUES(?,?,?)";
+        try (var connection = DriverManager.getConnection(databaseAddress);
+             var preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setString(1, contactObject.getId());
+            preparedStatement.setString(2, contactObject.getIp());
+            preparedStatement.setBytes(3, contactObject.getKey());
+            preparedStatement.executeQuery();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }

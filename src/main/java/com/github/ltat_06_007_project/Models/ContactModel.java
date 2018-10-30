@@ -21,6 +21,10 @@ public class ContactModel {
         return contactRepository.getAll();
     }
 
+    public void addContact(String idCode) {
+        contactRepository.insert(new ContactObject(idCode,new byte[0], ""));
+    }
+
     public ContactObject getById(String idCode) {
         return contactRepository.getById(idCode);
     }
