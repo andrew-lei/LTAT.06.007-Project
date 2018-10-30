@@ -50,7 +50,7 @@ public class ConnectionController {
         while (!Thread.interrupted()) {
             try (var serverSocket = new ServerSocket(42069)) {
                 Socket socket = serverSocket.accept();
-                new TcpConnection(socket, this, contactModel, chatView, chatModel, executor);
+                new TcpConnection(socket, this, contactModel, chatView, chatModel, executor).start();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
