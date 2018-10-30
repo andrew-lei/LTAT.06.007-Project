@@ -107,7 +107,7 @@ public class ContactRepository {
             preparedStatement.setString(1, contactObject.getId());
             preparedStatement.setString(2, contactObject.getIp());
             preparedStatement.setBytes(3, contactObject.getKey());
-            preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
