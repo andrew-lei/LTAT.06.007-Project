@@ -131,7 +131,7 @@ public class TcpConnection {
             key = new SecretKeySpec(Base64.getDecoder().decode(inputStream.readUTF()), "AES");
             log.info("connection from {} has been secured, starting communication", contactId);
             //TODO: sync states
-            executor.execute(listenerThread);
+            executor.execute(senderThread);
             receive();
         } else {
             log.info("denied connection to unauthorized id {}", contactId);
@@ -154,7 +154,7 @@ public class TcpConnection {
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);
             //TODO: sync states
-            executor.execute(listenerThread);
+            executor.execute(senderThread);
             receive();
 
 
