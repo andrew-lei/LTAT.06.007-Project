@@ -6,19 +6,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ContactRequest {
 
     private final String requesterIp;
-    private final String reqiesteeIp;
+    private final String requesteeIp;
 
     @JsonCreator
-    public ContactRequest(@JsonProperty("requesterIp")String requesterIp, @JsonProperty("reqiesteeIp")String reqiesteeIp) {
+    public ContactRequest(@JsonProperty("requesterIp")String requesterIp, @JsonProperty("requesteeIp")String requesteeIp) {
         this.requesterIp = requesterIp;
-        this.reqiesteeIp = reqiesteeIp;
+        this.requesteeIp = requesteeIp;
     }
 
     public String getRequesterIp() {
         return requesterIp;
     }
 
-    public String getReqiesteeIp() {
-        return reqiesteeIp;
+    public String getRequesteeIp() {
+        return requesteeIp;
     }
 }

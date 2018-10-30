@@ -137,7 +137,7 @@ public class NetworkNodeController {
                 } else if (networkMessageWrapper.getMessageType() == 1) {
                     String contactRequestSerialized = networkMessageWrapper.getSerializedMessage();
                     ContactRequest contactRequest = MainApplication.mapper.readValue(contactRequestSerialized, ContactRequest.class);
-                    if (contactRequest.getReqiesteeIp().equals(MainApplication.userIdCode)) {
+                    if (contactRequest.getRequesteeIp().equals(MainApplication.userIdCode)) {
                         contactModel.updateIp(contactRequest.getRequesterIp(),packet.getAddress().getHostAddress());
                     }
                 }
