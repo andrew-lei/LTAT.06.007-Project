@@ -107,15 +107,20 @@ public class TcpConnection {
 
     private void startConnection() {
         try {
-            if (isIncoming) {
-                incomingConnection();
-            } else {
-                outgoingConnection();
+            try {
+                if (isIncoming) {
+                    incomingConnection();
+                } else {
+                    outgoingConnection();
+                }
+            } catch (IOException e) {
+                log.info("",e);
             }
-        } catch (IOException e) {
+            close();
+        } catch (Exception e) {
             log.info("",e);
+            close();
         }
-        close();
     }
 
     private void incomingConnection() throws IOException {
