@@ -5,7 +5,7 @@ import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ChatModel;
 import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.Objects.MessageObject;
-import com.github.ltat_06_007_project.Views.ChatView;
+import com.github.ltat_06_007_project.Views.ChatView.ChatViewController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +29,7 @@ public class TcpConnection {
 
     private final ConnectionController connectionController;
     private final ContactModel contactModel;
-    private final ChatView chatView;
+    private final ChatViewController chatViewController;
     private final ChatModel chatModel;
     private final Executor executor;
 
@@ -57,7 +57,7 @@ public class TcpConnection {
     TcpConnection(Socket socket, ConnectionController connectionController, ContactModel contactModel, ApplicationContext applicationContext, ChatModel chatModel, Executor executor) {
         this.connectionController = connectionController;
         this.contactModel = contactModel;
-        this.chatView = applicationContext.getBean(ChatView.class);
+        this.chatViewController = applicationContext.getBean(ChatViewController.class);
         this.chatModel = chatModel;
 
         this.socket = socket;
@@ -72,7 +72,7 @@ public class TcpConnection {
     TcpConnection(String contactId, ConnectionController connectionController, ContactModel contactModel, ApplicationContext applicationContext,  ChatModel chatModel, Executor executor) {
         this.connectionController = connectionController;
         this.contactModel = contactModel;
-        this.chatView = applicationContext.getBean(ChatView.class);
+        this.chatViewController = applicationContext.getBean(ChatViewController.class);
         this.chatModel = chatModel;
 
         this.contactId = contactId;
@@ -193,7 +193,7 @@ public class TcpConnection {
                 byte[] cypherTextBytes = Base64.getDecoder().decode(inputStream.readUTF());
                 byte[] serializedMessage = Cryptography.decryptText(key, cypherTextBytes);
                 MessageObject message = MainApplication.mapper.readValue(serializedMessage, MessageObject.class);
-                chatView.insertMessage(chatModel.insertMessage(message));
+                chatViewController.insertMessage(chatModel.insertMessage(message));
                 log.info("received message from {}",contactId);
             } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
                 e.printStackTrace();
