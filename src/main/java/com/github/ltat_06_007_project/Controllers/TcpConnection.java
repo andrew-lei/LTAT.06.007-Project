@@ -129,6 +129,7 @@ public class TcpConnection {
             outputStream.writeUTF(MainApplication.userIdCode);
             outputStream.flush();
             key = new SecretKeySpec(Base64.getDecoder().decode(inputStream.readUTF()), "AES");
+            log.info("connection from {} has been secured, starting communication", contactId);
             //TODO: sync states
             executor.execute(listenerThread);
             receive();
@@ -151,6 +152,7 @@ public class TcpConnection {
             key = Cryptography.genAESKey();
             outputStream.writeUTF(Base64.getEncoder().encodeToString(key.getEncoded()));
             outputStream.flush();
+            log.info("connection to {} has been secured, starting communication", contactId);
             //TODO: sync states
             executor.execute(listenerThread);
             receive();
