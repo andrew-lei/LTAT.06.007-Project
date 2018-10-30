@@ -191,7 +191,7 @@ public class TcpConnection {
         }
     }
 
-    public void sendMessage(MessageObject messageObject) {
+    void sendMessage(MessageObject messageObject) {
         try {
             messageQueue.put(messageObject);
         } catch (InterruptedException e) {

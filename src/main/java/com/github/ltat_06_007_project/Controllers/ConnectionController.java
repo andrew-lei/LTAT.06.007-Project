@@ -7,6 +7,7 @@ import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.NetworkMessage.ContactRequest;
 import com.github.ltat_06_007_project.NetworkMessage.NetworkMessageWrapper;
 import com.github.ltat_06_007_project.Objects.ContactObject;
+import com.github.ltat_06_007_project.Objects.MessageObject;
 import com.github.ltat_06_007_project.Views.ChatView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -125,6 +126,12 @@ public class ConnectionController {
             if (idToConnection.get(tcpConnection.getContactId()) == tcpConnection) {
                 idToConnection.remove(tcpConnection.getContactId());
             }
+        }
+    }
+
+    void sendMessage(MessageObject messageObject) {
+        synchronized (idToConnection) {
+            idToConnection.get(messageObject.getContactId()).sendMessage(messageObject);
         }
     }
 }

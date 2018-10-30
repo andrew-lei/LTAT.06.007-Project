@@ -11,14 +11,18 @@ import java.util.List;
 public class ChatController {
 
     private final ChatModel chatModel;
+    private final ConnectionController connectionController;
 
     @Autowired
-    public ChatController(ChatModel chatModel) {
+    public ChatController(ChatModel chatModel, ConnectionController connectionController) {
         this.chatModel = chatModel;
+        this.connectionController = connectionController;
     }
     
     public MessageObject addMessage(String content) {
-        return chatModel.insertMessage(new MessageObject(content));
+        MessageObject message = chatModel.insertMessage(new MessageObject(content));
+        connectionController.sendMessage(message);
+        return message;
     }
 
     public List<MessageObject> getAllMessages() {
