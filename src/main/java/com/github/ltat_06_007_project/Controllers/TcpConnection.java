@@ -171,6 +171,8 @@ public class TcpConnection {
                 byte[] serializedMessage = MainApplication.mapper.writeValueAsBytes(message);
                 String cypherText = Base64.getEncoder().encodeToString(Cryptography.encryptText(key, serializedMessage));
                 outputStream.writeUTF(cypherText);
+                outputStream.flush();
+                log.info("sent message to {}",contactId);
             } catch (InterruptedException e) {
                 break;
             } catch (IOException e) {
@@ -188,6 +190,7 @@ public class TcpConnection {
                 byte[] serializedMessage = Cryptography.decryptText(key, cypherTextBytes);
                 MessageObject message = MainApplication.mapper.readValue(serializedMessage, MessageObject.class);
                 chatView.insertMessage(chatModel.insertMessage(message));
+                log.info("received message from {}",contactId);
             } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
                 e.printStackTrace();
             }
