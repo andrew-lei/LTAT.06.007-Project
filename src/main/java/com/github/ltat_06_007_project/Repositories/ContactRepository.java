@@ -30,6 +30,7 @@ public class ContactRepository {
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
                 + " identificationCode text NOT NULL UNIQUE,"
                 + " lastKey blob NOT NULL,"
+                + " publicKey blob,"
                 + " lastAddress text NOT NULL"
                 + ");";
 
@@ -113,5 +114,24 @@ public class ContactRepository {
             throw new RuntimeException(e);
         }
 
+    }
+
+    public void updatePublicKey(String id, byte[] publicKey) {
+        try {
+            insert(new ContactObject(id, new byte[0],""));
+        } catch (RuntimeException e) {
+
+        }
+
+        String sql = "UPDATE contact SET publicKey = ? WHERE identificationCode = ?";
+        try (var connection = DriverManager.getConnection(databaseAddress);
+             var preparedStatement = connection.prepareStatement(sql)) {
+
+            preparedStatement.setBytes(1, publicKey);
+            preparedStatement.setString(2, id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -32,4 +32,8 @@ public class ContactModel {
     public void updateIp(String idCode, String ipAddress) {
         contactRepository.updateIp(idCode, ipAddress);
     }
+
+    public void updatePublicKey(byte[] publicKey, String id) {
+        contactRepository.updatePublicKey(id, publicKey);
+    }
 }
