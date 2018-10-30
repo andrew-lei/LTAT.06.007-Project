@@ -9,7 +9,10 @@ import com.github.ltat_06_007_project.NetworkMessage.NetworkMessageWrapper;
 import com.github.ltat_06_007_project.Objects.ContactObject;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import com.github.ltat_06_007_project.Views.ChatView;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,21 +23,22 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Component
-public class ConnectionController {
+public class ConnectionController implements ApplicationContextAware {
 
     private final CopyOnWriteArraySet<String> allowedContacts;
     private final ConcurrentHashMap<String, TcpConnection> idToConnection = new ConcurrentHashMap<>();
     private final Executor executor = Executors.newCachedThreadPool();
     private final ContactModel contactModel;
     private final NetworkNodeController networkNodeController;
-    private final ChatView chatView;
     private final ChatModel chatModel;
 
+    private ApplicationContext applicationContext;
+
+
     @Autowired
-    public ConnectionController(ContactModel contactModel, NetworkNodeController networkNodeController, ChatView chatView, ChatModel chatModel) {
+    public ConnectionController(ContactModel contactModel, NetworkNodeController networkNodeController, ChatModel chatModel) {
         this.contactModel = contactModel;
         this.networkNodeController = networkNodeController;
-        this.chatView = chatView;
         this.chatModel = chatModel;
 
         this.allowedContacts = contactModel.getAll()
@@ -51,7 +55,7 @@ public class ConnectionController {
         while (!Thread.interrupted()) {
             try (var serverSocket = new ServerSocket(42069)) {
                 Socket socket = serverSocket.accept();
-                new TcpConnection(socket, this, contactModel, chatView, chatModel, executor).start();
+                new TcpConnection(socket, this, contactModel, applicationContext, chatModel, executor).start();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -73,7 +77,7 @@ public class ConnectionController {
                             networkNodeController.addToOutbox(new NetworkMessageWrapper(1, contactRequestSerialized));
 
                             if(!contactModel.getById(contactId).getIp().equals("")) {
-                                new TcpConnection(contactId, this,  contactModel,  chatView,  chatModel, executor).start();
+                                new TcpConnection(contactId, this,  contactModel, applicationContext,  chatModel, executor).start();
                             }
                         }
                     } catch (InterruptedException e) {
@@ -133,5 +137,10 @@ public class ConnectionController {
         synchronized (idToConnection) {
             idToConnection.get(messageObject.getContactId()).sendMessage(messageObject);
         }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }

@@ -8,6 +8,7 @@ import com.github.ltat_06_007_project.Objects.MessageObject;
 import com.github.ltat_06_007_project.Views.ChatView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -52,10 +53,10 @@ public class TcpConnection {
     }
 
 
-    TcpConnection(Socket socket, ConnectionController connectionController, ContactModel contactModel, ChatView chatView, ChatModel chatModel, Executor executor) {
+    TcpConnection(Socket socket, ConnectionController connectionController, ContactModel contactModel, ApplicationContext applicationContext, ChatModel chatModel, Executor executor) {
         this.connectionController = connectionController;
         this.contactModel = contactModel;
-        this.chatView = chatView;
+        this.chatView = applicationContext.getBean(ChatView.class);
         this.chatModel = chatModel;
 
         this.socket = socket;
@@ -67,10 +68,10 @@ public class TcpConnection {
 
     }
 
-    TcpConnection(String contactId, ConnectionController connectionController, ContactModel contactModel, ChatView chatView, ChatModel chatModel, Executor executor) {
+    TcpConnection(String contactId, ConnectionController connectionController, ContactModel contactModel, ApplicationContext applicationContext,  ChatModel chatModel, Executor executor) {
         this.connectionController = connectionController;
         this.contactModel = contactModel;
-        this.chatView = chatView;
+        this.chatView = applicationContext.getBean(ChatView.class);
         this.chatModel = chatModel;
 
         this.contactId = contactId;
