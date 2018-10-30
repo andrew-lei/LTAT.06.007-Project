@@ -42,7 +42,10 @@ public class Cryptography {
         /* Read all bytes from the private key file*/
         Path path = Paths.get(filepath);
         byte[] bytes = Files.readAllBytes(path);
+        return keyFromBytes (bytes);
+    }
 
+    public static PublicKey keyFromBytes(byte[] bytes) {
         /* Generate private key.*/
         X509EncodedKeySpec ks = new X509EncodedKeySpec(bytes);
         try {
@@ -73,9 +76,31 @@ public class Cryptography {
     }
 
     public static byte[] encryptSymKey(PublicKey pub, SecretKey key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, pub);
-        return cipher.doFinal(key.getEncoded());
+        return encryptBytes(pub, key.getEncoded());
+    }
+
+    public static byte[] encryptBytes(PublicKey pub, byte[] plainText) {
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+        try {
+            cipher.init(Cipher.ENCRYPT_MODE, pub);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        try {
+            return cipher.doFinal(plainText);
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static SecretKey decryptSymKey(PrivateKey key, byte[] encKey) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
@@ -83,6 +108,30 @@ public class Cryptography {
         cipher.init(Cipher.DECRYPT_MODE, key);
         byte[] decKey = cipher.doFinal(encKey);
         return new SecretKeySpec(decKey, 0, decKey.length, "AES");
+    }
+
+    public static byte[] decryptBytes(PrivateKey key, byte[] encryptedBytes){
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("RSA");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+        try {
+            cipher.init(Cipher.DECRYPT_MODE, key);
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        try {
+            return cipher.doFinal(encryptedBytes);
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static byte[] encryptText(SecretKey key, byte[] text) {

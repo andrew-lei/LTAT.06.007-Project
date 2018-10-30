@@ -31,4 +31,8 @@ public class ContactObject {
         this.ip = ip;
         this.allowed = true;
     }
+
+    public byte[] getPublicKey() {
+        return publicKey;
+    }
 }

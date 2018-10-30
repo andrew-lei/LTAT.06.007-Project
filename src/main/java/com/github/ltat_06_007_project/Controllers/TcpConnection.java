@@ -19,6 +19,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.InvalidKeyException;
+import java.security.PublicKey;
 import java.util.Base64;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -128,7 +129,8 @@ public class TcpConnection {
         if (contactModel.getById(contactId).getAllowed() && connectionController.notifyStart(this)) {
             outputStream.writeUTF(MainApplication.userIdCode);
             outputStream.flush();
-            key = new SecretKeySpec(Base64.getDecoder().decode(inputStream.readUTF()), "AES");
+            byte[] encryptedKey = Base64.getDecoder().decode(inputStream.readUTF());
+            key = new SecretKeySpec(Cryptography.decryptBytes(MainApplication.privateKey,encryptedKey), "AES");
             log.info("connection from {} has been secured, starting communication", contactId);
             //TODO: sync states
             executor.execute(senderThread);
@@ -144,13 +146,15 @@ public class TcpConnection {
         inputStream = new DataInputStream(socket.getInputStream());
         outputStream = new DataOutputStream(socket.getOutputStream());
         log.info("established outgoing TCP connection with {}",socket.getInetAddress().getHostAddress());
+        PublicKey contactPublicKey = Cryptography.keyFromBytes(contactModel.getById(contactId).getPublicKey());
         outputStream.writeUTF(MainApplication.userIdCode);
         outputStream.flush();
         String claimedId = inputStream.readUTF();
         if (claimedId.equals(contactId) && connectionController.notifyStart(this)) {
             log.info("connection to {} is confirmed as {}", socket.getInetAddress().getHostAddress(), contactId);
             key = Cryptography.genAESKey();
-            outputStream.writeUTF(Base64.getEncoder().encodeToString(key.getEncoded()));
+            byte[] encryptedKey = Cryptography.encryptBytes(contactPublicKey, contactModel.getById(contactId).getPublicKey());
+            outputStream.writeUTF(Base64.getEncoder().encodeToString(encryptedKey));
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);
             //TODO: sync states
