@@ -14,6 +14,8 @@ import javafx.scene.text.TextFlow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.LinkedBlockingQueue;
+
 
 @Component
 public class ChatView extends GridPane {
@@ -117,16 +119,27 @@ public class ChatView extends GridPane {
         outputPane.getChildren().add(textBox);
     }
 
+    private final LinkedBlockingQueue<MessageObject> messageQueue = new LinkedBlockingQueue<>();
+
     public void insertMessage(MessageObject message) {
-        var text = new Text(message.getContent());
-        text.setFill(Color.WHITE);
-        var textBox = new TextFlow(text);
-        textBox.setStyle("-fx-background-color: #0099ff; -fx-border-radius: 5; -fx-background-radius:5; -fx-padding: 5; -fx-end-margin: 10");
-        textBox.setTextAlignment(TextAlignment.RIGHT);
-        outputPane.setAlignment(Pos.BASELINE_RIGHT);
+        messageQueue.add(message);
+        Platform.runLater(this::printMessageFromNetwork);
 
-        outputPane.getChildren().add(textBox);
+    }
 
+    public void printMessageFromNetwork() {
+        try {
+            MessageObject message = messageQueue.take();
+            var text = new Text(message.getContent());
+            text.setFill(Color.WHITE);
+            var textBox = new TextFlow(text);
+            textBox.setStyle("-fx-background-color: #0099ff; -fx-border-radius: 5; -fx-background-radius:5; -fx-padding: 5; -fx-end-margin: 10");
+            textBox.setTextAlignment(TextAlignment.RIGHT);
+            outputPane.setAlignment(Pos.BASELINE_RIGHT);
+            outputPane.getChildren().add(textBox);
+        }
+        catch(InterruptedException e) {
+        }
     }
     private void loadOutput(){
         chatController.getAllMessages().forEach(m -> {
