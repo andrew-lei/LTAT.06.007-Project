@@ -28,10 +28,14 @@ public class Cryptography {
         }
     }
 
-    public static SecretKey genAESKey() throws NoSuchAlgorithmException {
-        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-        keyGen.init(256);
-        return keyGen.generateKey();
+    public static SecretKey genAESKey() {
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(256);
+            return keyGen.generateKey();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static PublicKey readPub(String filepath) throws IOException {
@@ -81,15 +85,33 @@ public class Cryptography {
         return new SecretKeySpec(decKey, 0, decKey.length, "AES");
     }
 
-    public static byte[] encryptText(SecretKey key, byte[] text) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        return cipher.doFinal(text);
+    public static byte[] encryptText(SecretKey key, byte[] text) {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.ENCRYPT_MODE, key);
+            return cipher.doFinal(text);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
-    public static byte[] decryptText(SecretKey key, byte[] encText) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance("AES");
-        cipher.init(Cipher.DECRYPT_MODE, key);
-        return cipher.doFinal(encText);
+    public static byte[] decryptText(SecretKey key, byte[] encText) throws   InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, key);
+            return cipher.doFinal(encText);
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+           return null;
+        }
     }
 }

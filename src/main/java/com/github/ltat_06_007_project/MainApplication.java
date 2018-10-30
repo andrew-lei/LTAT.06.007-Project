@@ -21,7 +21,7 @@ public class MainApplication extends Application {
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
-    public static String userIdCode = "39412301337";
+    public static String userIdCode = "39430121337";
     public static final ObjectMapper mapper = new ObjectMapper();
 
     public static void main(final String[] args) {

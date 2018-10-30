@@ -1,6 +1,7 @@
 package com.github.ltat_06_007_project.Views;
 
 import com.github.ltat_06_007_project.Controllers.ChatController;
+import com.github.ltat_06_007_project.Objects.MessageObject;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -114,6 +115,18 @@ public class ChatView extends GridPane {
         outputPane.setAlignment(Pos.BASELINE_RIGHT);
 
         outputPane.getChildren().add(textBox);
+    }
+
+    public void insertMessage(MessageObject message) {
+        var text = new Text(message.getContent());
+        text.setFill(Color.WHITE);
+        var textBox = new TextFlow(text);
+        textBox.setStyle("-fx-background-color: #0099ff; -fx-border-radius: 5; -fx-background-radius:5; -fx-padding: 5; -fx-end-margin: 10");
+        textBox.setTextAlignment(TextAlignment.RIGHT);
+        outputPane.setAlignment(Pos.BASELINE_RIGHT);
+
+        outputPane.getChildren().add(textBox);
+
     }
     private void loadOutput(){
         chatController.getAllMessages().forEach(m -> {

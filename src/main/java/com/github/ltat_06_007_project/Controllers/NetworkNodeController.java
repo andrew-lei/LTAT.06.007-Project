@@ -49,7 +49,7 @@ public class NetworkNodeController {
                 try {
                     packet.setAddress(InetAddress.getByName("255.255.255.255"));
                     socket.send(packet);
-                    log.info("sent out broadcast");
+                    //log.info("sent out broadcast");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -86,7 +86,7 @@ public class NetworkNodeController {
                     var packet = new DatagramPacket(new byte[1024], 0, 1024);
                     socket.receive(packet);
 
-                    log.info("received packet from {}", packet.getAddress().getHostAddress());
+                    //log.info("received packet from {}", packet.getAddress().getHostAddress());
                     inbox.add(packet);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -109,7 +109,7 @@ public class NetworkNodeController {
                             packet.setPort(42069);
                             packet.setAddress(InetAddress.getByName(address));
                             socket.send(packet);
-                            log.info("sent packet to {}", packet.getAddress().getHostAddress());
+                            //log.info("sent packet to {}", packet.getAddress().getHostAddress());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
