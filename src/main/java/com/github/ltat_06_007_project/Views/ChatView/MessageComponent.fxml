@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
+
+
+<HBox xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ltat_06_007_project.Views.ChatView.MessageComponentController">
+   <children>
+      <Region fx:id="leftRegion" />
+      <VBox fx:id="messageContainer" style="-fx-background-color: #dbe2ef;">
+         <children>
+            <HBox>
+               <children>
+                  <TextFlow fx:id="messageTextFlow">
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </TextFlow>
+               </children>
+            </HBox>
+            <HBox prefHeight="30.0">
+               <children>
+                  <Region />
+                  <Label fx:id="messageSentTime" text="MessageSentTime" textFill="#112d4e">
+                     <HBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </HBox.margin>
+                     <font>
+                        <Font name="SansSerif Regular" size="10.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <Region fx:id="rightRegion" />
+   </children>
+</HBox>

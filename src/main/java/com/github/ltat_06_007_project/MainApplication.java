@@ -1,8 +1,9 @@
 package com.github.ltat_06_007_project;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.ltat_06_007_project.Views.ChatView;
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
@@ -12,6 +13,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+
+import java.io.IOException;
 
 @SpringBootApplication
 public class MainApplication extends Application {
@@ -41,9 +44,13 @@ public class MainApplication extends Application {
     }
 
     @Override
-    public void init() {
+    public void init() throws IOException{
         springContext = SpringApplication.run(MainApplication.class);
-        scene = new Scene(springContext.getBean(ChatView.class));
+        var fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("LoginView.fxml"));
+        fxmlLoader.setControllerFactory(springContext::getBean);
+        Parent root = fxmlLoader.load();
+        scene = new Scene(root);
+        scene.setRoot(root);
     }
 
     @Override
@@ -52,7 +59,7 @@ public class MainApplication extends Application {
     }
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage)  {
         stage.setTitle("EID IM");
         stage.setScene(scene);
         stage.show();
