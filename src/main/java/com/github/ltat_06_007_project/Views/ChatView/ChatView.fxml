@@ -17,7 +17,7 @@
          <children>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label fx:id="UserLabel" alignment="CENTER" contentDisplay="CENTER" prefHeight="66.0" prefWidth="168.0" text="UserName" textAlignment="CENTER" textFill="WHITE">
+                  <Label fx:id="UserLabel" alignment="CENTER" contentDisplay="CENTER" opacity="0.75" prefHeight="66.0" prefWidth="168.0" text="UserName" textAlignment="CENTER" textFill="WHITE">
                      <HBox.margin>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </HBox.margin>
@@ -27,44 +27,31 @@
                   </Label>
                </children>
             </HBox>
-            <TextField opacity="0.75" promptText="Search..." style="-fx-border-radius: 5;">
-               <font>
-                  <Font name="SansSerif Regular" size="14.0" />
-               </font>
-               <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" />
-               </VBox.margin>
-            </TextField>
-            <ListView fx:id="contactBox" opacity="0.8" style="-fx-border-radius: 5px;" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </VBox.margin>
-            </ListView>
             <HBox>
                <VBox.margin>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="5.0" />
                </VBox.margin>
                <children>
-                  <Button fx:id="addContactButton" mnemonicParsing="false" onAction="#addContactButtonClicked" style="-fx-background-color: #f9f7f7; -fx-border-color: #3f72af; -fx-border-width: 0;" text="+" textAlignment="CENTER" textFill="#3f72af">
+                  <Button fx:id="addContactButton" mnemonicParsing="false" onAction="#addContactButtonClicked" opacity="0.75" prefHeight="34.0" prefWidth="24.0" style="-fx-background-color: #f9f7f7; -fx-border-color: #3f72af; -fx-border-width: 0;" text="+" textAlignment="CENTER" textFill="#3f72af">
                      <font>
-                        <Font size="16.0" />
+                        <Font name="System Bold" size="16.0" />
                      </font>
                   </Button>
-                  <TextField fx:id="newContactField" opacity="0.75" prefHeight="36.0" promptText="ID code" style="-fx-border-radius: 5;" visible="false" HBox.hgrow="ALWAYS">
+                  <TextField fx:id="newContactField" opacity="0.75" prefHeight="37.0" prefWidth="140.0" promptText="Identification code" style="-fx-border-radius: 5;" HBox.hgrow="ALWAYS">
                      <font>
                         <Font name="SansSerif Regular" size="14.0" />
                      </font>
                      <HBox.margin>
-                        <Insets left="5.0" right="5.0" />
+                        <Insets left="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button fx:id="cancelContactButton" mnemonicParsing="false" onAction="#cancelContactAdd" prefHeight="30.0" prefWidth="32.0" style="-fx-background-color: #f9f7f7; -fx-border-color: #3f72af; -fx-border-width: 0;" text="X" textAlignment="CENTER" textFill="#3f72af" visible="false">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Button>
                </children>
             </HBox>
+            <ListView fx:id="contactBox" opacity="0.8" style="-fx-border-radius: 5px;" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </ListView>
          </children>
       </VBox>
       <VBox style="-fx-background-color: dbe2ef;" HBox.hgrow="ALWAYS">
@@ -75,20 +62,20 @@
                   <VBox>
                      <children>
                         <Region VBox.vgrow="ALWAYS" />
-                        <Label fx:id="participants" prefHeight="46.0" text="My Good Friend" textAlignment="CENTER" textFill="#3f72af">
+                        <Label fx:id="participants" opacity="0.9" prefHeight="46.0" text="My Good Friend" textAlignment="CENTER" textFill="#3f72af">
                            <VBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
                            <font>
-                              <Font name="SansSerif Regular" size="18.0" />
+                              <Font name="SansSerif Regular" size="22.0" />
                            </font>
                         </Label>
                         <HBox>
                            <children>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Label fx:id="onlineStatus" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Online" textAlignment="CENTER" textFill="#3f72af">
+                              <Label fx:id="onlineStatus" alignment="CENTER_RIGHT" contentDisplay="RIGHT" opacity="0.9" text="Online" textAlignment="CENTER" textFill="#3f72af">
                                  <font>
-                                    <Font name="SansSerif Regular" size="14.0" />
+                                    <Font name="SansSerif Regular" size="16.0" />
                                  </font>
                                  <padding>
                                     <Insets bottom="5.0" right="10.0" />
@@ -115,7 +102,7 @@
                   <VBox prefWidth="100.0">
                      <children>
                         <Region prefHeight="200.0" prefWidth="200.0" />
-                        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendButtonAction" prefHeight="49.0" prefWidth="90.0" style="-fx-background-color: #f9f7f7; -fx-border-color: #3f72af; -fx-border-width: 0;" text="Send" textAlignment="CENTER" textFill="#3f72af">
+                        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#sendButtonAction" opacity="0.9" prefHeight="49.0" prefWidth="90.0" style="-fx-background-color: #f9f7f7; -fx-border-color: #3f72af; -fx-border-width: 0;" text="Send" textAlignment="CENTER" textFill="#3f72af">
                            <VBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
