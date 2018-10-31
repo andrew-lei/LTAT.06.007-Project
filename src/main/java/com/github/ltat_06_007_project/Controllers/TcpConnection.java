@@ -149,6 +149,7 @@ public class TcpConnection {
 
         Optional<ContactObject> optionalContactObject = contactModel.getById(contactId);
         if (!optionalContactObject.isPresent()) {
+            log.info("couldn't find contact {}, contactId");
             return;
         }
 
@@ -203,7 +204,7 @@ public class TcpConnection {
             if (!optionalContactObject.isPresent()) {
                 return;
             }
-            byte[] encryptedKey = Cryptography.encryptBytes(contactPublicKey, optionalContactObject.get().getPublicKey());
+            byte[] encryptedKey = Cryptography.encryptBytes(contactPublicKey, key.getEncoded());
             outputStream.writeUTF(Base64.getEncoder().encodeToString(encryptedKey));
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);

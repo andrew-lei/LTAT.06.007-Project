@@ -31,7 +31,7 @@ public class Cryptography {
     public static SecretKey genAESKey() {
         try {
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(256);
+            keyGen.init(192);
             return keyGen.generateKey();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
