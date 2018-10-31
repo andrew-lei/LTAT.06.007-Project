@@ -59,7 +59,6 @@
 		<version>1.2.3</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.jitsi/ice4j -->
 		<dependency>
 			<groupId>org.jitsi</groupId>
 			<artifactId>ice4j</artifactId>

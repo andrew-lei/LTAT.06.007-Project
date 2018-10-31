@@ -69,6 +69,7 @@ public class IceTest {
         String toSend = null;
         try {
             toSend = SdpUtils.createSDPDescription(agent);
+            System.out.println(toSend);
             // Each computersends this information
             // This information describes all the possible IP addresses and
             // ports
