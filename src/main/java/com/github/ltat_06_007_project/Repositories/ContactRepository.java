@@ -89,7 +89,7 @@ public class ContactRepository {
     }
 
     public ContactObject get(String identificationCode) throws SQLException {
-        String sql = "SELECT * FROM contact WHERE identificationCode = " + identificationCode;
+        String sql = "SELECT * FROM contact WHERE identificationCode = \"" + identificationCode + "\"";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement();
