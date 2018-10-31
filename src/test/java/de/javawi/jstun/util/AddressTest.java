@@ -21,7 +21,7 @@ public class AddressTest extends TestCase {
 	}
 
 	protected void setUp() throws Exception {
-		address = new Address("192.168.100.1");
+		address = new Address("192.168.1.243");
 	}
 
 	/*
@@ -29,7 +29,7 @@ public class AddressTest extends TestCase {
 	 */
 	public void testAddressIntIntIntInt() {
 		try {
-			Address comp = new Address(192,168,100,1);
+			Address comp = new Address(192,168,1,243);
 			assertTrue(address.equals(comp));
 		} catch (UtilityException ue) {
 			ue.printStackTrace();
@@ -41,7 +41,7 @@ public class AddressTest extends TestCase {
 	 */
 	public void testAddressString() {
 		try {
-			Address comp = new Address("192.168.100.1");
+			Address comp = new Address("192.168.1.243");
 			assertTrue(address.equals(comp));
 		} catch (UtilityException ue) {
 			ue.printStackTrace();
@@ -66,7 +66,7 @@ public class AddressTest extends TestCase {
 	 */
 	public void testToString() {
 		try {
-			Address comp = new Address("192.168.100.1");
+			Address comp = new Address("192.168.1.243");
 			assertTrue(address.equals(comp));
 		} catch (UtilityException ue) {
 			ue.printStackTrace();
@@ -94,9 +94,9 @@ public class AddressTest extends TestCase {
 	 */
 	public void testGetInetAddress() {
 		try {
-			Address comp = new Address("192.168.100.1");
+			Address comp = new Address("192.168.1.243");
 			assertTrue(address.getInetAddress().equals(comp.getInetAddress()));
-			comp = new Address("192.168.100.2");
+			comp = new Address("192.168.1.243");
 			assertFalse(address.getInetAddress().equals(comp.getInetAddress()));
 		} catch (UtilityException ue) {
 			ue.printStackTrace();
@@ -110,9 +110,9 @@ public class AddressTest extends TestCase {
 	 */
 	public void testEqualsObject() {
 		try {
-			Address comp = new Address("192.168.100.1");
+			Address comp = new Address("192.168.1.243");
 			assertTrue(address.equals(comp));
-			comp = new Address("192.168.100.2");
+			comp = new Address("192.168.1.243");
 			assertFalse(address.equals(comp));
 		} catch (UtilityException ue) {
 			ue.printStackTrace();
