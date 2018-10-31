@@ -71,7 +71,6 @@ public class ConnectionController implements ApplicationContextAware {
                         Set<String> disconnectedContacts = allowedContacts.stream()
                                 .filter(c -> !idToConnection.containsKey(c))
                                 .collect(Collectors.toSet());
-
                         for (String contactId : disconnectedContacts) {
                             ContactRequest contactRequest = new ContactRequest(MainApplication.userIdCode, contactId);
                             String contactRequestSerialized = MainApplication.mapper.writeValueAsString(contactRequest);
@@ -80,7 +79,7 @@ public class ConnectionController implements ApplicationContextAware {
 
                             Optional<ContactObject> optionalContactObject = contactModel.getById(contactId);
                             if (!optionalContactObject.isPresent()) {
-                                return;
+                                continue;
                             }
                             if(!optionalContactObject.get().getIpAddress().equals("")) {
                                 new TcpConnection(contactId, this,  contactModel, applicationContext,  chatModel, executor).start();
