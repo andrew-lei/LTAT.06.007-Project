@@ -8,7 +8,16 @@ public class ContactComponentController {
     @FXML
     private Label contactNameLabel;
 
+    private ChatViewController chatViewController;
+
+    public void setChatViewController(ChatViewController controller){
+        this.chatViewController = controller;
+    }
+
     public void setContactNameLabel(String contactNameLabel) {
         this.contactNameLabel.setText(contactNameLabel);
+    }
+    public void onMouseClicked(){
+        chatViewController.setContact(contactNameLabel.getText());
     }
 }

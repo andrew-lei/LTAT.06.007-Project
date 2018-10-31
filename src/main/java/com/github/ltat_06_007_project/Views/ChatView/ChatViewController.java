@@ -10,7 +10,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -49,8 +52,6 @@ public class ChatViewController implements Initializable {
     @FXML
     private Button addContactButton;
 
-    @FXML
-    private Button cancelContactButton;
 
     @FXML
     private TextField newContactField;
@@ -61,26 +62,36 @@ public class ChatViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         UserLabel.setText(MainApplication.userIdCode);
-        loadOutput();
+        loadContacts();
     }
     @Autowired
     public ChatViewController(ChatController chatController, ContactController contactController) {
         this.chatController = chatController;
         this.contactController = contactController;
     }
-
+    private void loadContacts(){
+        contactController.getAllContacts().forEach(c -> createContactBox(c.getIdCode()));
+    }
     public void sendButtonAction(){
         sendMessage();
     }
+    @FXML
+    void addContactButtonClicked(ActionEvent event) {
+        addContact();
+    }
 
     private void addContact() {
-        var contact = contactController.addContact(newContactField.getText());
+        contactController.addContact(newContactField.getText());
+        createContactBox(newContactField.getText());
         newContactField.clear();
     }
+
 
     public void setContact(String contactId) {
         currentContact = contactId;
         participants.setText(contactId);
+        chatBox.getItems().clear();
+        loadOutput();
     }
 
     private void sendMessage(){
@@ -114,10 +125,20 @@ public class ChatViewController implements Initializable {
         chatBox.getItems().add(messageComponent);
 
     }
-    @FXML
-    void addContactButtonClicked(ActionEvent event) {
-        addContact();
+    private void createContactBox(String contactId){
+        try{
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ContactComponent.fxml"));
+            var contactComponent = fxmlLoader.load();
+            var contactController = (ContactComponentController)fxmlLoader.getController();
+            contactController.setChatViewController(this);
+            contactController.setContactNameLabel(contactId);
+            contactBox.getItems().add(contactComponent);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
     }
+
     private final LinkedBlockingQueue<MessageObject> messageQueue = new LinkedBlockingQueue<>();
 
     public void insertMessage(MessageObject message){
