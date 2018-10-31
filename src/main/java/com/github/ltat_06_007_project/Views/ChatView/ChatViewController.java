@@ -94,7 +94,7 @@ public class ChatViewController implements Initializable {
         chatBox.scrollTo(chatBox.getItems().size()-1);
     }
     private void loadOutput(){
-        chatController.getAllMessages().stream().filter(m -> m.getContactId().equals(currentContact)).forEach(m -> {
+        chatController.getAllMessages(currentContact).forEach(m -> {
             try {
                 createMessageBox(m.getContent(), new Date().toString(), true);
             } catch (IOException e) {

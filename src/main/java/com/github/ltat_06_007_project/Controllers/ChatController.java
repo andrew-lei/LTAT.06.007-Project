@@ -5,7 +5,10 @@ import com.github.ltat_06_007_project.Models.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ChatController {
@@ -27,5 +30,9 @@ public class ChatController {
 
     public List<MessageObject> getAllMessages() {
         return chatModel.getMessages();
+    }
+
+    public List<MessageObject> getAllMessages(String contactId) {
+        return chatModel.getMessages().stream().filter(m -> m.getContactId().equals(contactId)).collect(Collectors.toList());
     }
 }
