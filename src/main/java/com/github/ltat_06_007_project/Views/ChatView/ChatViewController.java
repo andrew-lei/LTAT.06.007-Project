@@ -55,6 +55,8 @@ public class ChatViewController implements Initializable {
     @FXML
     private TextField newContactField;
 
+    private String currentContact;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -77,8 +79,13 @@ public class ChatViewController implements Initializable {
         newContactField.clear();
     }
 
+    public void setContact(String contactId) {
+        currentContact = contactId;
+        participants.setText(contactId);
+    }
+
     private void sendMessage(){
-        var message = chatController.addMessage(messageBox.getText(),"ContactId");
+        var message = chatController.addMessage(messageBox.getText(),currentContact);
         messageBox.clear();
         try {
             createMessageBox(message.getContent(), new Date().toString(), false);
