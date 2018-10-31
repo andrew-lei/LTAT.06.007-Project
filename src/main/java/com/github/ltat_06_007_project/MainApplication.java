@@ -29,7 +29,7 @@ public class MainApplication extends Application {
 
     public static void main(final String[] args) {
         try {
-            privateKey = Cryptography.readKey("cer,key");
+            privateKey = Cryptography.readKey("cer.key");
             publicKey = Cryptography.readPub("cert.pub");
         } catch (IOException e) {
             try {
