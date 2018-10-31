@@ -28,12 +28,24 @@ public class ContactModel {
         }
     }
 
-    public boolean addContact(ContactObject contactObject) {
+    public ContactObject addContact(ContactObject contactObject) {
         try {
-            contactRepository.insert(contactObject);
-            return true;
+            ContactObject oldContact = contactRepository.get(contactObject.getIdCode());
+            ContactObject newContact = new ContactObject(oldContact.getIdCode()
+                    ,oldContact.getSymmetricKey()
+                    ,oldContact.getPublicKey()
+                    ,oldContact.getIpAddress()
+                    ,true);
+            contactRepository.update(newContact);
+            return newContact;
         } catch (SQLException e) {
-            return false;
+            try {
+                contactRepository.insert(contactObject);
+                return contactObject;
+            }
+            catch (SQLException e1) {
+                return null;
+            }
         }
     }
 

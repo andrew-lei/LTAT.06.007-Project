@@ -1,6 +1,9 @@
 package com.github.ltat_06_007_project.Views.ChatView;
 
 import com.github.ltat_06_007_project.Controllers.ChatController;
+import com.github.ltat_06_007_project.Controllers.ContactController;
+import com.github.ltat_06_007_project.MainApplication;
+import com.github.ltat_06_007_project.Objects.ContactObject;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -42,6 +45,7 @@ public class ChatViewController implements Initializable {
     private Label UserLabel;
 
     private ChatController chatController;
+    private ContactController contactController;
     @FXML
     private Button addContactButton;
 
@@ -54,17 +58,25 @@ public class ChatViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        UserLabel.setText("MyName");
+        UserLabel.setText(MainApplication.userIdCode);
         loadOutput();
     }
     @Autowired
-    public ChatViewController(ChatController chatController) {
+    public ChatViewController(ChatController chatController, ContactController contactController) {
         this.chatController = chatController;
+        this.contactController = contactController;
     }
 
     public void sendButtonAction(){
         sendMessage();
+        addContact();
     }
+
+    private void addContact() {
+        var contact = contactController.addContact(newContactField.getText());
+        newContactField.clear();
+    }
+
     private void sendMessage(){
         var message = chatController.addMessage(messageBox.getText(),"ContactId");
         messageBox.clear();
