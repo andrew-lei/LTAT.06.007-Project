@@ -27,7 +27,8 @@ public class MessageRepository {
     private void createNewDatabase() {
         String sql = "CREATE TABLE IF NOT EXISTS message ("
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
-                + " content text NOT NULL"
+                + " content text NOT NULL,"
+                + "contactId text NOT NULL"
                 + ");";
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
@@ -38,11 +39,12 @@ public class MessageRepository {
     }
 
     public MessageObject insertMessage(MessageObject messageObject) {
-        String sql = "INSERT INTO message(content) VALUES(?)";
+        String sql = "INSERT INTO message(content,contactId) VALUES(?,?)";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
              var preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, messageObject.getContent());
+            preparedStatement.setString(2, messageObject.getContactId());
             preparedStatement.executeUpdate();
             return messageObject;
         } catch (SQLException e) {
@@ -59,7 +61,7 @@ public class MessageRepository {
 
             List<MessageObject> allMessageObjects = new ArrayList<>();
             while (resultSet.next()) {
-                allMessageObjects.add(new MessageObject(resultSet.getString("content"),""));
+                allMessageObjects.add(new MessageObject(resultSet.getString("content"),resultSet.getString("contactId")));
             }
             return allMessageObjects;
         } catch (SQLException e) {
