@@ -9,7 +9,7 @@
  * included in this distribution.
  */
 
-package test;
+package de.javawi.jstun.test;
 
 import de.javawi.jstun.attribute.*;
 import de.javawi.jstun.header.MessageHeader;

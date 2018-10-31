@@ -9,7 +9,7 @@
  * included in this distribution.
  */
 
-package test;
+package de.javawi.jstun.test;
 
 import de.javawi.jstun.attribute.*;
 import de.javawi.jstun.header.MessageHeader;
@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.*;
 
-public class DiscoveryTest {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DiscoveryTest.class);
+public class FastDiscoveryTest {
+	private static final Logger LOGGER = LoggerFactory.getLogger(FastDiscoveryTest.class);
 	InetAddress sourceIaddress;
 	int sourcePort;
 	String stunServer;
@@ -34,7 +34,12 @@ public class DiscoveryTest {
 	DatagramSocket socketTest1 = null;
 	DiscoveryInfo di = null;
 
-	public DiscoveryTest(InetAddress sourceIaddress, int sourcePort, String stunServer, int stunServerPort) {
+	final static int UNINITIALIZED = -1;
+	final static int ERROR = 0;
+	final static int CONNECTION_ESTABLISHED_NO_ERROR = 1;
+	final static int CONNECTION_TIMEOUT = 2;
+
+	public FastDiscoveryTest(InetAddress sourceIaddress, int sourcePort, String stunServer, int stunServerPort) {
 		this.sourceIaddress = sourceIaddress;
 		this.sourcePort = sourcePort;
 		this.stunServer = stunServer;
@@ -48,14 +53,77 @@ public class DiscoveryTest {
 		socketTest1 = null;
 		di = new DiscoveryInfo(sourceIaddress);
 		
-		if (test1()) {
-			if (test2()) {
-				if (test1Redo()) {
-					test3();
-				}
+		int returnTest2 = UNINITIALIZED;
+		int returnTest3 = UNINITIALIZED;
+		
+		// run test1 and test2 in parallel
+		// run test1Redo and test3 in parallel
+		
+		Test1Thread t1t = new Test1Thread(this);
+		t1t.start();
+		
+		Test2Thread t2t = new Test2Thread(this);
+		t2t.start();
+		
+		while (t1t.isAlive() || t2t.isAlive()) {
+			try {
+				Thread.currentThread().sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
 		
+		boolean returnTest1 = t1t.getReturnTest1();
+		
+		if (returnTest1) {
+			returnTest2 = test2();
+			
+			// evaluate result of test1 and test2
+			if (returnTest2 != UNINITIALIZED) {
+				if ((returnTest2 == CONNECTION_ESTABLISHED_NO_ERROR) && (!nodeNatted)) {
+					di.setOpenAccess();
+				}
+				if ((returnTest2 == CONNECTION_ESTABLISHED_NO_ERROR) && (nodeNatted)) {
+					di.setFullCone();
+				}
+				if ((returnTest2 == CONNECTION_TIMEOUT) && (!nodeNatted)) {
+					di.setSymmetricUDPFirewall();
+				}
+			}
+			
+			if ((returnTest2 == CONNECTION_TIMEOUT) && (nodeNatted)) {
+				// start test1redo and test3 in parallel
+				
+				Test1RedoThread t1rt = new Test1RedoThread(this);
+				t1rt.start();
+				
+				Test3Thread t3t = new Test3Thread(this);
+				t3t.start();
+				
+				while (t1rt.isAlive() || t3t.isAlive()) {
+					try {
+						Thread.currentThread().sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				if (t1rt.getReturnTest1Redo()) {
+					returnTest3 = t3t.getReturnTest3();
+					
+					// evaluate test3
+					if (returnTest3 != UNINITIALIZED) {
+						if ((returnTest3 == CONNECTION_ESTABLISHED_NO_ERROR) && (nodeNatted)) {
+							di.setRestrictedCone();
+						}
+						if (returnTest3 == CONNECTION_TIMEOUT) {
+							di.setPortRestrictedCone();
+						}
+					}
+				}
+			}
+		}
+	
 		socketTest1.close();
 		
 		return di;
@@ -90,7 +158,6 @@ public class DiscoveryTest {
 					receiveMH = MessageHeader.parseHeader(receive.getData());
 					receiveMH.parseAttributes(receive.getData());
 				}
-				
 				ma = (MappedAddress) receiveMH.getMessageAttribute(MessageAttribute.MessageAttributeType.MappedAddress);
 				ca = (ChangedAddress) receiveMH.getMessageAttribute(MessageAttribute.MessageAttributeType.ChangedAddress);
 				ErrorCode ec = (ErrorCode) receiveMH.getMessageAttribute(MessageAttribute.MessageAttributeType.ErrorCode);
@@ -115,12 +182,9 @@ public class DiscoveryTest {
 					return true;
 				}
 			} catch (SocketTimeoutException ste) {
-				if (timeSinceFirstTransmission < 7900) {
+				if (timeSinceFirstTransmission < 300) {
 					LOGGER.debug("Test 1: Socket timeout while receiving the response.");
 					timeSinceFirstTransmission += timeout;
-					int timeoutAddValue = (timeSinceFirstTransmission * 2);
-					if (timeoutAddValue > 1600) timeoutAddValue = 1600;
-					timeout = timeoutAddValue;
 				} else {
 					// node is not capable of udp communication
 					LOGGER.debug("Test 1: Socket timeout while receiving the response. Maximum retry limit exceed. Give up.");
@@ -132,7 +196,7 @@ public class DiscoveryTest {
 		}
 	}
 		
-	private boolean test2() throws UtilityException, SocketException, UnknownHostException, IOException, MessageAttributeParsingException, MessageAttributeException, MessageHeaderParsingException {
+	private int test2() throws UtilityException, SocketException, UnknownHostException, IOException, MessageAttributeParsingException, MessageAttributeException, MessageHeaderParsingException {	
 		int timeSinceFirstTransmission = 0;
 		int timeout = timeoutInitValue;
 		while (true) {
@@ -175,34 +239,16 @@ public class DiscoveryTest {
 				if (ec != null) {
 					di.setError(ec.getResponseCode(), ec.getReason());
 					LOGGER.debug("Message header contains an Errorcode message attribute.");
-					return false;
+					return ERROR;
 				}
-				if (!nodeNatted) {
-					di.setOpenAccess();
-					LOGGER.debug("Node has open access to the Internet (or, at least the node is behind a full-cone NAT without translation).");
-				} else {
-					di.setFullCone();
-					LOGGER.debug("Node is behind a full-cone NAT.");
-				}
-				return false;
+				return CONNECTION_ESTABLISHED_NO_ERROR;
 			} catch (SocketTimeoutException ste) {
-				if (timeSinceFirstTransmission < 7900) {
+				if (timeSinceFirstTransmission < 300) {
 					LOGGER.debug("Test 2: Socket timeout while receiving the response.");
 					timeSinceFirstTransmission += timeout;
-					int timeoutAddValue = (timeSinceFirstTransmission * 2);
-					if (timeoutAddValue > 1600) timeoutAddValue = 1600;
-					timeout = timeoutAddValue;
 				} else {
 					LOGGER.debug("Test 2: Socket timeout while receiving the response. Maximum retry limit exceed. Give up.");
-					if (!nodeNatted) {
-						di.setSymmetricUDPFirewall();
-						LOGGER.debug("Node is behind a symmetric UDP firewall.");
-						return false;
-					} else {
-						// not is natted
-						// redo test 1 with address and port as offered in the changed-address message attribute
-						return true;
-					}
+					return CONNECTION_TIMEOUT; 
 				}
 			}
 		}
@@ -212,7 +258,7 @@ public class DiscoveryTest {
 		int timeSinceFirstTransmission = 0;
 		int timeout = timeoutInitValue;
 		while (true) {
-			// redo test 1 with address and port as offered in the changed-address message attribute
+			// redo de.javawi.jstun.test 1 with address and port as offered in the changed-address message attribute
 			try {
 				// Test 1 with changed port and address values
 				socketTest1.connect(ca.getAddress().getInetAddress(), ca.getPort());
@@ -256,12 +302,9 @@ public class DiscoveryTest {
 				}
 				return true;
 			} catch (SocketTimeoutException ste2) {
-				if (timeSinceFirstTransmission < 7900) {
+				if (timeSinceFirstTransmission < 300) {
 					LOGGER.debug("Test 1 redo with changed address: Socket timeout while receiving the response.");
 					timeSinceFirstTransmission += timeout;
-					int timeoutAddValue = (timeSinceFirstTransmission * 2);
-					if (timeoutAddValue > 1600) timeoutAddValue = 1600;
-					timeout = timeoutAddValue;
 				} else {
 					LOGGER.debug("Test 1 redo with changed address: Socket timeout while receiving the response.  Maximum retry limit exceed. Give up.");
 					return false;
@@ -270,7 +313,7 @@ public class DiscoveryTest {
 		}
 	}
 	
-	private void test3() throws UtilityException, SocketException, UnknownHostException, IOException, MessageAttributeParsingException, MessageAttributeException, MessageHeaderParsingException {
+	private int test3() throws UtilityException, SocketException, UnknownHostException, IOException, MessageAttributeParsingException, MessageAttributeException, MessageHeaderParsingException {
 		int timeSinceFirstTransmission = 0;
 		int timeout = timeoutInitValue;
 		while (true) {
@@ -312,27 +355,102 @@ public class DiscoveryTest {
 				if (ec != null) {
 					di.setError(ec.getResponseCode(), ec.getReason());
 					LOGGER.debug("Message header contains an Errorcode message attribute.");
-					return;
+					return ERROR;
 				}
-				if (nodeNatted) {
-					di.setRestrictedCone();
-					LOGGER.debug("Node is behind a restricted NAT.");
-					return;
-				}
+				return CONNECTION_ESTABLISHED_NO_ERROR;
 			} catch (SocketTimeoutException ste) {
-				if (timeSinceFirstTransmission < 7900) {
+				if (timeSinceFirstTransmission < 300) {
 					LOGGER.debug("Test 3: Socket timeout while receiving the response.");
 					timeSinceFirstTransmission += timeout;
-					int timeoutAddValue = (timeSinceFirstTransmission * 2);
-					if (timeoutAddValue > 1600) timeoutAddValue = 1600;
-					timeout = timeoutAddValue;
 				} else {
 					LOGGER.debug("Test 3: Socket timeout while receiving the response. Maximum retry limit exceed. Give up.");
-					di.setPortRestrictedCone();
-					LOGGER.debug("Node is behind a port restricted NAT.");
-					return;
+					return CONNECTION_TIMEOUT;
 				}
 			}
+		}
+	}
+	
+	public class Test1Thread extends Thread {
+		private FastDiscoveryTest fdt;
+		private boolean returnTest1;
+		
+		public Test1Thread(FastDiscoveryTest fdt) {
+			this.fdt = fdt;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				returnTest1 = fdt.test1();
+			} catch (Exception e) {	
+			}
+		}
+		
+		public boolean getReturnTest1() {
+			return returnTest1;
+		}
+	}
+	
+	public class Test2Thread extends Thread {
+		private FastDiscoveryTest fdt;
+		private int returnTest2;
+		
+		public Test2Thread(FastDiscoveryTest fdt) {
+			this.fdt = fdt;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				returnTest2 = fdt.test2();
+			} catch (Exception e) {	
+			}
+		}
+		
+		public int getReturnTest2() {
+			return returnTest2;
+		}
+	}
+	
+	public class Test1RedoThread extends Thread {
+		private FastDiscoveryTest fdt;
+		private boolean returnTest1Redo;
+		
+		public Test1RedoThread(FastDiscoveryTest fdt) {
+			this.fdt = fdt;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				returnTest1Redo = fdt.test1Redo();
+			} catch (Exception e) {	
+			}
+		}
+		
+		public boolean getReturnTest1Redo() {
+			return returnTest1Redo;
+		}
+	}
+	
+	public class Test3Thread extends Thread {
+		private FastDiscoveryTest fdt;
+		private int returnTest3;
+		
+		public Test3Thread(FastDiscoveryTest fdt) {
+			this.fdt = fdt;
+		}
+		
+		@Override
+		public void run() {
+			try {
+				returnTest3 = fdt.test3();
+			} catch (Exception e) {	
+			}
+		}
+		
+		public int getReturnTest3() {
+			return returnTest3;
 		}
 	}
 }

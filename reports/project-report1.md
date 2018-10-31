@@ -55,5 +55,5 @@ date: 11th October 2018
 ## Implemented so far
 
 - Generate key pair
-- Sign public key with DigiDoc in test mode
+- Sign public key with DigiDoc in de.javawi.jstun.test mode
 - Encrypt string with public key

@@ -9,9 +9,9 @@
  * included in this distribution.
  */
 
-package test.demo;
+package de.javawi.jstun.test.demo;
 
-import test.BindingLifetimeTest;
+import de.javawi.jstun.test.BindingLifetimeTest;
 
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;

@@ -9,7 +9,7 @@
  * included in this distribution.
  */
 
-package test.demo.ice;
+package de.javawi.jstun.test.demo.ice;
 
 import de.javawi.jstun.util.Address;
 import de.javawi.jstun.util.UtilityException;

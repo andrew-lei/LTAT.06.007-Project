@@ -9,7 +9,7 @@
  * included in this distribution.
  */
 
-package test;
+package de.javawi.jstun.test;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

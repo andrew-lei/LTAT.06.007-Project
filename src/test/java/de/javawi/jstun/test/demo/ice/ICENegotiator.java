@@ -9,7 +9,7 @@
  * included in this distribution.
  */
 
-package test.demo.ice;
+package de.javawi.jstun.test.demo.ice;
 
 import de.javawi.jstun.attribute.MessageAttributeException;
 import de.javawi.jstun.header.MessageHeaderParsingException;
@@ -18,8 +18,8 @@ import de.javawi.jstun.util.Address;
 import de.javawi.jstun.util.UtilityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import test.DiscoveryInfo;
-import test.DiscoveryTest;
+import de.javawi.jstun.test.DiscoveryInfo;
+import de.javawi.jstun.test.DiscoveryTest;
 
 import java.io.IOException;
 import java.net.InetAddress;

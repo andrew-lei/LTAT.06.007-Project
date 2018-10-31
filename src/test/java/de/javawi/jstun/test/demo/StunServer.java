@@ -9,7 +9,7 @@
  * included in this distribution.
  */
 
-package test.demo;
+package de.javawi.jstun.test.demo;
 
 import de.javawi.jstun.attribute.*;
 import de.javawi.jstun.attribute.MessageAttributeInterface.MessageAttributeType;
@@ -246,7 +246,7 @@ public class StunServer {
 	public static void main(String args[]) {
 		try {
 			if (args.length != 4) {
-				System.out.println("usage: java de.javawi.jstun.test.demo.StunServer PORT1 IP1 PORT2 IP2");
+				System.out.println("usage: java de.javawi.jstun.de.javawi.jstun.test.demo.StunServer PORT1 IP1 PORT2 IP2");
 				System.out.println();
 				System.out.println(" PORT1 - the first port that should be used by the server");
 				System.out.println("   IP1 - the first ip address that should be used by the server");

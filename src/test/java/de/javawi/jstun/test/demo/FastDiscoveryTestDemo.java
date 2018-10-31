@@ -9,9 +9,9 @@
  * included in this distribution.
  */
 
-package test.demo;
+package de.javawi.jstun.test.demo;
 
-import test.FastDiscoveryTest;
+import de.javawi.jstun.test.FastDiscoveryTest;
 
 import java.net.BindException;
 import java.net.InetAddress;
@@ -36,7 +36,7 @@ public class FastDiscoveryTestDemo implements Runnable {
 	public void run() {
 		try {
 			FastDiscoveryTest test = new FastDiscoveryTest(iaddress, port, "jstun.javawi.de", 3478);
-			//DiscoveryTest test = new DiscoveryTest(iaddress, "stun.sipgate.net", 10000);
+			//DiscoveryTest de.javawi.jstun.test = new DiscoveryTest(iaddress, "stun.sipgate.net", 10000);
 			// iphone-stun.freenet.de:3478
 			// larry.gloo.net:3478
 			// stun.xten.net:3478
