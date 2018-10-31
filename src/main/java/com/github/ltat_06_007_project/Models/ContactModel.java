@@ -68,27 +68,29 @@ public class ContactModel {
             contactRepository.update(newContact);
             return true;
         } catch (SQLException e) {
+            e.printStackTrace();
             return false;
         }
     }
 
     public boolean updatePublicKey(String identificationCode, byte[] publicKey) {
-        ContactObject oldContact;
         try {
-            oldContact = contactRepository.get(identificationCode);
-        } catch (SQLException e) {
-            oldContact = new ContactObject(identificationCode,new byte[0], publicKey, "",false);
-        }
-        ContactObject newContact = new ContactObject(oldContact.getIdCode()
-                ,oldContact.getSymmetricKey()
-                ,publicKey
-                ,oldContact.getIpAddress()
-                ,oldContact.getAllowed());
-        try {
+            ContactObject oldContact = contactRepository.get(identificationCode);
+            ContactObject newContact = new ContactObject(oldContact.getIdCode()
+                    ,oldContact.getSymmetricKey()
+                    ,publicKey
+                    ,oldContact.getIpAddress()
+                    ,oldContact.getAllowed());
             contactRepository.update(newContact);
             return true;
         } catch (SQLException e) {
-            return false;
+            try {
+                contactRepository.insert( new ContactObject(identificationCode,new byte[0], publicKey, "",false));
+                return true;
+            } catch (SQLException e1) {
+                return false;
+            }
+
         }
     }
 }
