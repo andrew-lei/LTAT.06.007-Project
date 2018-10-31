@@ -66,7 +66,7 @@ public class ChatViewController implements Initializable {
         sendMessage();
     }
     private void sendMessage(){
-        var message = chatController.addMessage(messageBox.getText());
+        var message = chatController.addMessage(messageBox.getText(),"ContactId");
         messageBox.clear();
         try {
             createMessageBox(message.getContent(), new Date().toString(), false);

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -43,7 +44,8 @@ public class ConnectionController implements ApplicationContextAware {
         this.allowedContacts = contactModel.getAll()
                 .stream()
                 .filter(ContactObject::getAllowed)
-                .map(ContactObject::getId)
+                .filter(c -> !c.getIdCode().equals(MainApplication.userIdCode))
+                .map(ContactObject::getIdCode)
                 .collect(Collectors.toCollection(CopyOnWriteArraySet::new));
 
         new Thread(this::listenForConnections).start();
@@ -75,7 +77,12 @@ public class ConnectionController implements ApplicationContextAware {
                             String contactRequestSerialized = MainApplication.mapper.writeValueAsString(contactRequest);
                             networkNodeController.addToOutbox(new NetworkMessageWrapper(1, contactRequestSerialized));
 
-                            if(!contactModel.getById(contactId).getIp().equals("")) {
+
+                            Optional<ContactObject> optionalContactObject = contactModel.getById(contactId);
+                            if (!optionalContactObject.isPresent()) {
+                                return;
+                            }
+                            if(!optionalContactObject.get().getIpAddress().equals("")) {
                                 new TcpConnection(contactId, this,  contactModel, applicationContext,  chatModel, executor).start();
                             }
                         }
@@ -126,7 +133,8 @@ public class ConnectionController implements ApplicationContextAware {
 
     void notifyClose(TcpConnection tcpConnection) {
         synchronized (idToConnection) {
-            if (idToConnection.get(tcpConnection.getContactId()) == tcpConnection) {
+            TcpConnection oldConnection = idToConnection.get(tcpConnection.getContactId());
+            if (oldConnection!= null && oldConnection == tcpConnection) {
                 idToConnection.remove(tcpConnection.getContactId());
             }
         }

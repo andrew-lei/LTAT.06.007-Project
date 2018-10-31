@@ -19,8 +19,8 @@ public class ChatController {
         this.connectionController = connectionController;
     }
     
-    public MessageObject addMessage(String content) {
-        MessageObject message = chatModel.insertMessage(new MessageObject(content));
+    public MessageObject addMessage(String content, String contactId) {
+        MessageObject message = chatModel.insertMessage(new MessageObject(content,contactId));
         connectionController.sendMessage(message);
         return message;
     }

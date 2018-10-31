@@ -4,6 +4,7 @@ import com.github.ltat_06_007_project.Cryptography;
 import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ChatModel;
 import com.github.ltat_06_007_project.Models.ContactModel;
+import com.github.ltat_06_007_project.Objects.ContactObject;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import com.github.ltat_06_007_project.Views.ChatView.ChatViewController;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import java.net.Socket;
 import java.security.InvalidKeyException;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -90,18 +92,27 @@ public class TcpConnection {
     void close() {
         listenerThread.interrupt();
         senderThread.interrupt();
-        try {
-            inputStream.close();
-        } catch (NullPointerException | IOException e) {
+        if (inputStream != null) {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+            }
         }
-        try {
-            outputStream.close();
-        } catch (NullPointerException | IOException e) {
+
+        if (outputStream != null) {
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+            }
         }
-        try {
-            socket.close();
-        } catch (NullPointerException | IOException e) {
+
+        if (socket != null) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+            }
         }
+
         connectionController.notifyClose(this);
     }
 
@@ -116,9 +127,9 @@ public class TcpConnection {
             } catch (IOException e) {
                 log.info("",e);
             }
-            close();
         } catch (Exception e) {
             log.info("",e);
+        } finally {
             close();
         }
     }
@@ -131,7 +142,17 @@ public class TcpConnection {
         contactId = inputStream.readUTF();
         log.info("connection from {} is identified as {}", socket.getInetAddress().getHostAddress(), contactId);
 
-        if (contactModel.getById(contactId).getAllowed() && connectionController.notifyStart(this)) {
+        if (!connectionController.notifyStart(this)) {
+            log.info("stopping duplicate connection to {}", contactId);
+            return;
+        }
+
+        Optional<ContactObject> optionalContactObject = contactModel.getById(contactId);
+        if (!optionalContactObject.isPresent()) {
+            return;
+        }
+
+        if (optionalContactObject.get().getAllowed()) {
             outputStream.writeUTF(MainApplication.userIdCode);
             outputStream.flush();
             byte[] encryptedKey = Base64.getDecoder().decode(inputStream.readUTF());
@@ -147,18 +168,42 @@ public class TcpConnection {
     }
 
     private void outgoingConnection() throws IOException {
-        socket = new Socket(contactModel.getById(contactId).getIp(), 42069);
+
+        Optional<ContactObject> optionalContactObject = contactModel.getById(contactId);
+        if (!optionalContactObject.isPresent()) {
+            return;
+        }
+        socket = new Socket(optionalContactObject.get().getIpAddress(), 42069);
         inputStream = new DataInputStream(socket.getInputStream());
         outputStream = new DataOutputStream(socket.getOutputStream());
+
+
+        optionalContactObject = contactModel.getById(contactId);
+        if (!optionalContactObject.isPresent()) {
+            return;
+        }
+
+
         log.info("established outgoing TCP connection with {}",socket.getInetAddress().getHostAddress());
-        PublicKey contactPublicKey = Cryptography.keyFromBytes(contactModel.getById(contactId).getPublicKey());
+        PublicKey contactPublicKey = Cryptography.keyFromBytes(optionalContactObject.get().getPublicKey());
         outputStream.writeUTF(MainApplication.userIdCode);
         outputStream.flush();
+
+        if (!connectionController.notifyStart(this)) {
+            log.info("stopping duplicate connection to {}", contactId);
+            return;
+        }
+
+
         String claimedId = inputStream.readUTF();
-        if (claimedId.equals(contactId) && connectionController.notifyStart(this)) {
+        if (claimedId.equals(contactId)) {
             log.info("connection to {} is confirmed as {}", socket.getInetAddress().getHostAddress(), contactId);
             key = Cryptography.genAESKey();
-            byte[] encryptedKey = Cryptography.encryptBytes(contactPublicKey, contactModel.getById(contactId).getPublicKey());
+            optionalContactObject = contactModel.getById(contactId);
+            if (!optionalContactObject.isPresent()) {
+                return;
+            }
+            byte[] encryptedKey = Cryptography.encryptBytes(contactPublicKey, optionalContactObject.get().getPublicKey());
             outputStream.writeUTF(Base64.getEncoder().encodeToString(encryptedKey));
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);

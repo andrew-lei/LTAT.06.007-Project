@@ -5,7 +5,10 @@ import com.github.ltat_06_007_project.Repositories.ContactRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class ContactModel {
@@ -18,22 +21,62 @@ public class ContactModel {
     }
 
     public List<ContactObject> getAll() {
-        return contactRepository.getAll();
+        try {
+            return contactRepository.get();
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
     }
 
-    public void addContact(String idCode) {
-        contactRepository.insert(new ContactObject(idCode,new byte[0], ""));
+    public boolean addContact(ContactObject contactObject) {
+        try {
+            contactRepository.insert(contactObject);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
-    public ContactObject getById(String idCode) {
-        return contactRepository.getById(idCode);
+    public Optional<ContactObject> getById(String identificationCode) {
+        try {
+            return Optional.of(contactRepository.get(identificationCode));
+        } catch (SQLException e) {
+           return Optional.empty();
+        }
     }
 
-    public void updateIp(String idCode, String ipAddress) {
-        contactRepository.updateIp(idCode, ipAddress);
+    public boolean updateIp(String identificationCode, String ipAddress) {
+        try {
+            ContactObject oldContact = contactRepository.get(identificationCode);
+            ContactObject newContact = new ContactObject(oldContact.getIdCode()
+                                                        ,oldContact.getSymmetricKey()
+                                                        ,oldContact.getPublicKey()
+                                                        ,ipAddress
+                                                        ,oldContact.getAllowed());
+            contactRepository.update(newContact);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
-    public void updatePublicKey(byte[] publicKey, String id) {
-        contactRepository.updatePublicKey(id, publicKey);
+    public boolean updatePublicKey(String identificationCode, byte[] publicKey) {
+        ContactObject oldContact;
+        try {
+            oldContact = contactRepository.get(identificationCode);
+        } catch (SQLException e) {
+            oldContact = new ContactObject(identificationCode,new byte[0], publicKey, "",false);
+        }
+        ContactObject newContact = new ContactObject(oldContact.getIdCode()
+                ,oldContact.getSymmetricKey()
+                ,publicKey
+                ,oldContact.getIpAddress()
+                ,oldContact.getAllowed());
+        try {
+            contactRepository.update(newContact);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 }

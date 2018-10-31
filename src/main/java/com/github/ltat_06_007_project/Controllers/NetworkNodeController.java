@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.*;
-import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -180,7 +179,7 @@ public class NetworkNodeController {
                 } else if (networkMessageWrapper.getMessageType() == 2) {
                     String publicKeyShareSerialized = networkMessageWrapper.getSerializedMessage();
                     PublicKeyShare publicKeyShare = MainApplication.mapper.readValue(publicKeyShareSerialized, PublicKeyShare.class);
-                    contactModel.updatePublicKey(publicKeyShare.getPublicKey(), publicKeyShare.getId());
+                    contactModel.updatePublicKey(publicKeyShare.getId(), publicKeyShare.getPublicKey());
 
                     log.info("got public key");
                 } else if (networkMessageWrapper.getMessageType() == 3) {

@@ -50,7 +50,7 @@ public class MessageRepository {
         }
     }
 
-    public List<MessageObject> getAllMessages() {
+    public List<MessageObject> getAllMessages(){
         String sql = "SELECT * FROM message";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
@@ -59,7 +59,7 @@ public class MessageRepository {
 
             List<MessageObject> allMessageObjects = new ArrayList<>();
             while (resultSet.next()) {
-                allMessageObjects.add(new MessageObject(resultSet.getString("content")));
+                allMessageObjects.add(new MessageObject(resultSet.getString("content"),""));
             }
             return allMessageObjects;
         } catch (SQLException e) {
