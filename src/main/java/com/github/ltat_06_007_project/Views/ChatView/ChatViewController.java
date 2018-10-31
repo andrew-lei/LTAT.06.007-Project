@@ -71,7 +71,6 @@ public class ChatViewController implements Initializable {
 
     public void sendButtonAction(){
         sendMessage();
-        addContact();
     }
 
     private void addContact() {
@@ -117,17 +116,7 @@ public class ChatViewController implements Initializable {
     }
     @FXML
     void addContactButtonClicked(ActionEvent event) {
-        this.newContactField.setVisible(true);
-        this.cancelContactButton.setVisible(true);
-        this.addContactButton.setVisible(false);
-    }
-
-    @FXML
-    void cancelContactAdd(ActionEvent event) {
-        this.newContactField.clear();
-        this.newContactField.setVisible(false);
-        this.cancelContactButton.setVisible(false);
-        this.addContactButton.setVisible(true);
+        addContact();
     }
     private final LinkedBlockingQueue<MessageObject> messageQueue = new LinkedBlockingQueue<>();
 
