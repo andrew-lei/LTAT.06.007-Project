@@ -80,6 +80,14 @@ public class BindingLifetimeTest {
 			receiveMH.parseAttributes(receive.getData());
 		}
 		ma = (MappedAddress) receiveMH.getMessageAttribute(MessageAttribute.MessageAttributeType.MappedAddress);
+        System.out.println(ma.toString());
+        System.out.println(initialSocket.getInetAddress());
+        System.out.println(initialSocket.getLocalAddress());
+		DatagramSocket socket  = new DatagramSocket(initialSocket.getLocalPort());
+		var packet = new DatagramPacket(new byte[1024], 0, 1024);
+		socket.receive(packet);
+		System.out.println(packet.getData());
+		System.out.println("Passed");
 		ErrorCode ec = (ErrorCode) receiveMH.getMessageAttribute(MessageAttribute.MessageAttributeType.ErrorCode);
 		if (ec != null) {
 			LOGGER.debug("Message header contains an Errorcode message attribute.");
