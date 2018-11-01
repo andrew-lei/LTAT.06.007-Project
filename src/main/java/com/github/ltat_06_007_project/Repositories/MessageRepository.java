@@ -1,5 +1,6 @@
-package com.github.ltat_06_007_project;
+package com.github.ltat_06_007_project.Repositories;
 
+import com.github.ltat_06_007_project.Objects.MessageObject;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -10,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MessageDatabase {
+public class MessageRepository {
 
     private final String databaseAddress;
 
-    public MessageDatabase() {
+    public MessageRepository() {
         try {
             databaseAddress = "jdbc:sqlite:" + (new File(".")).getCanonicalPath() + "/database.db";
             createNewDatabase();
@@ -26,7 +27,8 @@ public class MessageDatabase {
     private void createNewDatabase() {
         String sql = "CREATE TABLE IF NOT EXISTS message ("
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
-                + " content text NOT NULL"
+                + " content text NOT NULL,"
+                + "contactId text NOT NULL"
                 + ");";
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
@@ -36,31 +38,32 @@ public class MessageDatabase {
         }
     }
 
-    public Message insertMessage(Message message) {
-        String sql = "INSERT INTO message(content) VALUES(?)";
+    public MessageObject insertMessage(MessageObject messageObject) {
+        String sql = "INSERT INTO message(content,contactId) VALUES(?,?)";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
              var preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, message.getContent());
+            preparedStatement.setString(1, messageObject.getContent());
+            preparedStatement.setString(2, messageObject.getContactId());
             preparedStatement.executeUpdate();
-            return message;
+            return messageObject;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<Message> getAllMessages() {
+    public List<MessageObject> getAllMessages(){
         String sql = "SELECT * FROM message";
 
         try (var connection = DriverManager.getConnection(databaseAddress);
              var statement = connection.createStatement()) {
             var resultSet = statement.executeQuery(sql);
 
-            List<Message> allMessages = new ArrayList<>();
+            List<MessageObject> allMessageObjects = new ArrayList<>();
             while (resultSet.next()) {
-                allMessages.add(new Message(resultSet.getString("content")));
+                allMessageObjects.add(new MessageObject(resultSet.getString("content"),resultSet.getString("contactId")));
             }
-            return allMessages;
+            return allMessageObjects;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
