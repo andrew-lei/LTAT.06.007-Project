@@ -1,5 +1,5 @@
 ---
-title: Encrypted P2P Messaging Using EID - report \#1
+title: Encrypted P2P Messaging Using EID - report \#2
 author: Jüri Gramann, 
         Tambet Kaal, 
         Mattias Lass, 
@@ -28,7 +28,7 @@ date: 1st November 2018
 - Message encryption
 - P2P operations
 
-# GUI
+---
 
 ![](screencap-report2.png){ width=75% height=75% }
 
