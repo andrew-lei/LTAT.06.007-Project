@@ -30,7 +30,7 @@ date: 1st November 2018
 
 # GUI
 
-![](screencap-report2.png)
+![](screencap-report2.png){ width=75% height=75% }
 
 # Next milestone
 
@@ -61,8 +61,8 @@ date: 1st November 2018
     - Port restricted Cone NAT - Accepts only same ip and port where the request was sent.
 
 ---
-![](https://upload.wikimedia.org/wikipedia/commons/6/63/STUN_Algorithm3.svg)
-Source: https://commons.wikimedia.org/wiki/File:STUN_Algorithm3.svg
+![](STUN-report2.png){ width=75% height=75% }
+Source: <https://commons.wikimedia.org/wiki/File:STUN_Algorithm3.svg>
 
 # Andrew
 
