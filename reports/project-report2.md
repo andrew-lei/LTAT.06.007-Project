@@ -10,7 +10,13 @@ date: 1st November 2018
 # Milestone 2
 ## Goals 
 
+- Functional GUI
+- EID signing
+- Message encryption
+
 ## Actual work done 
+
+- Functional encryption utilities
 
 # Mattias
 
@@ -31,7 +37,9 @@ Source: https://commons.wikimedia.org/wiki/File:STUN_Algorithm3.svg
 
 # Andrew
 
-- Generate public/private key pair
+- Generate RSA key pair
 - Use EID to sign public key
 - Verify signed public key
-- Generate
+- Generate and encrypt AES key with public key
+- Decrypt AES key with private key
+- Encrypt/decrypt AES messages
