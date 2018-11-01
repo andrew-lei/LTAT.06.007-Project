@@ -28,7 +28,9 @@ date: 1st November 2018
 - Message encryption
 - P2P operations
 
-# Image
+# GUI
+
+![](screencap-report2.png)
 
 # Next milestone
 
