@@ -20,7 +20,9 @@ date: 1st November 2018
 
 # Andrew
 
-- Generate public/private key pair
+- Generate RSA key pair
 - Use EID to sign public key
 - Verify signed public key
-- Generate
+- Generate and encrypt AES key with public key
+- Decrypt AES key with private key
+- Encrypt/decrypt AES messages
