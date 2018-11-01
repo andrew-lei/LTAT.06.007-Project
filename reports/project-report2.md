@@ -7,6 +7,13 @@ author: Jüri Gramann,
 date: 1st November 2018
 ---
 
+# Idea description
+
+* Encrypted peer-to-peer messaging
+* Uses Estonian ID system for both identification and encryption
+* Pass messages to offline users by holding them with mutual friends
+* Designated servers that pass messages to offline peers
+
 # Milestone 2
 ## Goals 
 
@@ -16,9 +23,29 @@ date: 1st November 2018
 
 ## Actual work done 
 
-- Functional encryption utilities
+- Functional GUI
+- EID signing utility
+- Message encryption
+- P2P operations
+
+# Image
+
+# Next milestone
+
+- EID integration
+- Sending messages to offline parties
+- NAT traversal
+- P2P operation optimization
+- Quality of life improvements(use contact name instead of id code)
 
 # Mattias
+
+- Reworked TCP connections between contacts
+- Integrated encryption 
+- Implemented P2P operations
+
+# Tambet
+- GUI
 
 # Jüri
 
@@ -34,8 +61,6 @@ date: 1st November 2018
 ---
 ![](https://upload.wikimedia.org/wikipedia/commons/6/63/STUN_Algorithm3.svg)
 Source: https://commons.wikimedia.org/wiki/File:STUN_Algorithm3.svg
-
-# Tambet
 
 # Andrew
 
