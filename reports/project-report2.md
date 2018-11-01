@@ -28,6 +28,8 @@ date: 1st November 2018
     - Ice4j (UDP)
     - JSTUN (UDP)
 - Recieve public IP and port
+- Need to implement a server
+    - Port restricted Cone NAT - Accepts only same ip and port where the request was sent.
 
 ---
 ![](https://upload.wikimedia.org/wikipedia/commons/6/63/STUN_Algorithm3.svg)
