@@ -10,7 +10,13 @@ date: 1st November 2018
 # Milestone 2
 ## Goals 
 
+- Functional GUI
+- EID signing
+- Message encryption
+
 ## Actual work done 
+
+- Functional encryption utilities
 
 # Mattias
 
