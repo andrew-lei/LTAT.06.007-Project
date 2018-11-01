@@ -52,17 +52,12 @@ date: 1st November 2018
 # Jüri
 
 - Research NAT traversial
-- Different types of NAT
 - ICE 
     - Ice4j (UDP)
     - JSTUN (UDP)
 - Recieve public IP and port
-- Need to implement a server
-    - Port restricted Cone NAT - Accepts only same ip and port where the request was sent.
-
----
-![](STUN-report2.png){ width=75% height=75% }
-Source: <https://commons.wikimedia.org/wiki/File:STUN_Algorithm3.svg>
+- Need to implement a server or client as a server
+    - Different types of NAT
 
 # Andrew
 
