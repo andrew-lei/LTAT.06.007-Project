@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -19,6 +20,8 @@ import java.io.IOException;
 public class LoginViewController {
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private TextField keyPath;
     @FXML
     private Button loginButton;
 
