@@ -25,7 +25,7 @@ public class MessageComponentController {
     private Label messageSentTime;
 
     void SetMessageText(String text){
-        var messageText = new Text(text);
+        Text messageText = new Text(text);
         this.messageTextFlow.getChildren().add(messageText);
     }
     void SetMessageSent(String messageSent){

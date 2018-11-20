@@ -3,7 +3,6 @@ package com.github.ltat_06_007_project.Views.ChatView;
 import com.github.ltat_06_007_project.Controllers.ChatController;
 import com.github.ltat_06_007_project.Controllers.ContactController;
 import com.github.ltat_06_007_project.MainApplication;
-import com.github.ltat_06_007_project.Models.MessageModel;
 import com.github.ltat_06_007_project.Objects.ContactObject;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import javafx.application.Platform;
@@ -96,7 +95,7 @@ public class ChatViewController implements Initializable {
     }
 
     private void sendMessage(){
-        var message = chatController.addMessage(messageBox.getText(),currentContact);
+        MessageObject message = chatController.addMessage(messageBox.getText(),currentContact);
         messageBox.clear();
         try {
             createMessageBox(message);
@@ -118,8 +117,8 @@ public class ChatViewController implements Initializable {
     @FXML
     private void createMessageBox(MessageObject message) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("MessageComponent.fxml"));
-        var messageComponent = fxmlLoader.load();
-        var messageController = (MessageComponentController)fxmlLoader.getController();
+        Object messageComponent = fxmlLoader.load();
+        MessageComponentController messageController = (MessageComponentController)fxmlLoader.getController();
         messageController.SetMessageSent(message.getMessageSentTime().toString());
         messageController.SetMessageText(message.getContent());
         messageController.setMessageAlignment(message.getContactId().equals(MainApplication.userIdCode));
@@ -129,8 +128,8 @@ public class ChatViewController implements Initializable {
     private void createContactBox(String contactId){
         try{
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ContactComponent.fxml"));
-            var contactComponent = fxmlLoader.load();
-            var contactController = (ContactComponentController)fxmlLoader.getController();
+            Object contactComponent = fxmlLoader.load();
+            ContactComponentController contactController = (ContactComponentController)fxmlLoader.getController();
             contactController.setChatViewController(this);
             contactController.setContactNameLabel(contactId);
             contactBox.getItems().add(contactComponent);

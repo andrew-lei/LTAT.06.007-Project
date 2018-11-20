@@ -81,7 +81,7 @@ public class NetworkNodeController {
         while (!Thread.interrupted()) {
 
             log.info("sent out advertisment");
-            var packet = new DatagramPacket(packetBytes, packetBytes.length);
+            DatagramPacket packet = new DatagramPacket(packetBytes, packetBytes.length);
             packet.setPort(42069);
             socket.setBroadcast(true);
             try {
@@ -117,7 +117,7 @@ public class NetworkNodeController {
             while(!Thread.interrupted()) {
 
                 try {
-                    var packet = new DatagramPacket(new byte[1024], 0, 1024);
+                    DatagramPacket packet = new DatagramPacket(new byte[1024], 0, 1024);
                     socket.receive(packet);
 
                     log.info("received packet from {}", packet.getAddress().getHostAddress());
@@ -137,7 +137,7 @@ public class NetworkNodeController {
                 try {
                     NetworkMessageWrapper message = outbox.take();
                     byte[] messageBytes = MainApplication.mapper.writeValueAsBytes(message);
-                    var packet = new DatagramPacket(messageBytes, 0, messageBytes.length);
+                    DatagramPacket packet = new DatagramPacket(messageBytes, 0, messageBytes.length);
                     for (String address: networkNodeAddressSet) {
                         try {
                             packet.setPort(42069);

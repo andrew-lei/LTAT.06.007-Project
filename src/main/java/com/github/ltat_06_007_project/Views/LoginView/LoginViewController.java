@@ -42,7 +42,7 @@ public class LoginViewController {
     @FXML
     void loginAction(ActionEvent event)throws IOException {
     //ToDo: Validate user
-        var fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ChatView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ChatView.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         Parent root = fxmlLoader.load();
         this.scene = new Scene(root);

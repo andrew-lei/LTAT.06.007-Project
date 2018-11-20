@@ -3,11 +3,10 @@ package com.github.ltat_06_007_project.Repositories;
 import com.github.ltat_06_007_project.Objects.ContactObject;
 import org.springframework.stereotype.Component;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.File;
 import java.io.IOException;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +34,8 @@ public class ContactRepository {
                 + "allowed INTEGER NOT NULL"
                 + ");";
 
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -46,8 +45,8 @@ public class ContactRepository {
     public void insert(ContactObject contactObject) throws SQLException {
         String sql = "INSERT INTO contact(identificationCode,symmetricKey,publicKey,ipAddress,allowed)" +
                 " VALUES(?,?,?,?,?)";
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, contactObject.getIdCode());
             preparedStatement.setBytes(2, contactObject.getSymmetricKey());
             preparedStatement.setBytes(3, contactObject.getPublicKey());
@@ -62,8 +61,8 @@ public class ContactRepository {
         String sql = "UPDATE contact " +
                 "SET symmetricKey = ?, ipAddress = ?, publicKey = ?, allowed = ?" +
                 "WHERE identificationCode = ?";
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setBytes(1, contactObject.getSymmetricKey());
             preparedStatement.setString(2, contactObject.getIpAddress());
             preparedStatement.setBytes(3, contactObject.getPublicKey());
@@ -76,9 +75,9 @@ public class ContactRepository {
     public List<ContactObject> get() throws SQLException {
         String sql = "SELECT * FROM contact";
 
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var statement = connection.createStatement();
-             var resultSet = statement.executeQuery(sql)) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
 
             List<ContactObject> allContacts = new ArrayList<>();
             while (resultSet.next()) {
@@ -91,9 +90,9 @@ public class ContactRepository {
     public ContactObject get(String identificationCode) throws SQLException {
         String sql = "SELECT * FROM contact WHERE identificationCode = \"" + identificationCode + "\"";
 
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var statement = connection.createStatement();
-             var resultSet = statement.executeQuery(sql)) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
             resultSet.next();
             return createObject(resultSet);
         }
