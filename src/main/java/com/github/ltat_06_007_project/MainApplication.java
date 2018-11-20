@@ -6,11 +6,16 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.digidoc4j.Container;
+import org.digidoc4j.Signature;
+import org.digidoc4j.X509Cert;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -24,12 +29,12 @@ public class MainApplication extends Application {
 
     public static PrivateKey privateKey;
     public static PublicKey publicKey;
-    public static String userIdCode = "39430121337";
+    public static String userIdCode = "39430121338";
     public static final ObjectMapper mapper = new ObjectMapper();
 
     public static void main(final String[] args) {
         try {
-            privateKey = Cryptography.readKey("cer.key");
+            privateKey = Cryptography.readKey("cert.key");
             publicKey = Cryptography.readPub("cert.pub");
         } catch (IOException e) {
             try {
@@ -40,13 +45,24 @@ public class MainApplication extends Application {
                 throw new RuntimeException(e1);
             }
         }
+        try {
+            //Cryptography.signKey("cert.key","C:/Windows/SysWOW64/onepin-opensc-pkcs11.dll",new char[]{'2','3','2','5'}, "signed.pub");
+            Container container = Cryptography.containerFromB64Bytes(Files.readAllBytes(Paths.get("signed.pub")));
+            System.out.println(new String(Cryptography.getData(container)));
+
+            Signature signature = container.getSignatures().get(0);
+            System.out.println(signature.getSigningCertificate().getSubjectName(X509Cert.SubjectName.SURNAME));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         launch(MainApplication.class, args);
     }
 
     @Override
     public void init() throws IOException{
         springContext = SpringApplication.run(MainApplication.class);
-        var fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("LoginView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("LoginView.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         Parent root = fxmlLoader.load();
         scene = new Scene(root);

@@ -54,7 +54,7 @@ public class ConnectionController implements ApplicationContextAware {
 
     private void listenForConnections() {
         while (!Thread.interrupted()) {
-            try (var serverSocket = new ServerSocket(42069)) {
+            try (ServerSocket serverSocket = new ServerSocket(42069)) {
                 Socket socket = serverSocket.accept();
                 new TcpConnection(socket, this, contactModel, applicationContext, chatModel, executor).start();
             } catch (IOException e) {

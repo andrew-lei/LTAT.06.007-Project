@@ -95,7 +95,7 @@ public class ChatViewController implements Initializable {
     }
 
     private void sendMessage(){
-        var message = chatController.addMessage(messageBox.getText(),currentContact);
+        MessageObject message = chatController.addMessage(messageBox.getText(),currentContact);
         messageBox.clear();
         try {
             createMessageBox(message.getContent(), new Date().toString(), false);
@@ -117,8 +117,8 @@ public class ChatViewController implements Initializable {
     @FXML
     private void createMessageBox(String message, String messageSent, boolean sentToCurrentUser) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("MessageComponent.fxml"));
-        var messageComponent = fxmlLoader.load();
-        var messageController = (MessageComponentController)fxmlLoader.getController();
+        Object messageComponent = fxmlLoader.load();
+        MessageComponentController messageController = (MessageComponentController)fxmlLoader.getController();
         messageController.SetMessageSent(messageSent);
         messageController.SetMessageText(message);
         messageController.setMessageAlignment(sentToCurrentUser);
@@ -128,8 +128,8 @@ public class ChatViewController implements Initializable {
     private void createContactBox(String contactId){
         try{
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ContactComponent.fxml"));
-            var contactComponent = fxmlLoader.load();
-            var contactController = (ContactComponentController)fxmlLoader.getController();
+            Object contactComponent = fxmlLoader.load();
+            ContactComponentController contactController = (ContactComponentController)fxmlLoader.getController();
             contactController.setChatViewController(this);
             contactController.setContactNameLabel(contactId);
             contactBox.getItems().add(contactComponent);

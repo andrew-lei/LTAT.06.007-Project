@@ -1,12 +1,12 @@
 package com.github.ltat_06_007_project.Repositories;
 
+import com.github.ltat_06_007_project.Controllers.ConnectionController;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +30,8 @@ public class MessageRepository {
                 + " content text NOT NULL,"
                 + "contactId text NOT NULL"
                 + ");";
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var statement = connection.createStatement()) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -41,8 +41,8 @@ public class MessageRepository {
     public MessageObject insertMessage(MessageObject messageObject) {
         String sql = "INSERT INTO message(content,contactId) VALUES(?,?)";
 
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, messageObject.getContent());
             preparedStatement.setString(2, messageObject.getContactId());
             preparedStatement.executeUpdate();
@@ -55,9 +55,9 @@ public class MessageRepository {
     public List<MessageObject> getAllMessages(){
         String sql = "SELECT * FROM message";
 
-        try (var connection = DriverManager.getConnection(databaseAddress);
-             var statement = connection.createStatement()) {
-            var resultSet = statement.executeQuery(sql);
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             Statement statement = connection.createStatement()) {
+            ResultSet resultSet = statement.executeQuery(sql);
 
             List<MessageObject> allMessageObjects = new ArrayList<>();
             while (resultSet.next()) {
