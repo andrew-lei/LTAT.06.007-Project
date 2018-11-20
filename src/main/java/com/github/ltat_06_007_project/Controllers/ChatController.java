@@ -23,7 +23,7 @@ public class ChatController {
     }
     
     public MessageObject addMessage(String content, String contactId) {
-        MessageObject message = chatModel.insertMessage(new MessageObject(content,contactId));
+        MessageObject message = chatModel.insertMessage(new MessageObject(content,contactId, new Date()));
         connectionController.sendMessage(message);
         return message;
     }

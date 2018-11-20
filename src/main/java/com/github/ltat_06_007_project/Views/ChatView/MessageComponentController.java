@@ -33,6 +33,10 @@ public class MessageComponentController {
     }
     void setMessageAlignment(boolean leftAlignment){
         messageTextFlow.setTextAlignment(leftAlignment? TextAlignment.LEFT : TextAlignment.RIGHT);
-        VBox.setVgrow(leftAlignment ? rightRegion : leftRegion, Priority.ALWAYS);
+        if(leftAlignment){
+            leftRegion.setMaxWidth(0.0);
+        }else{
+            rightRegion.setMaxWidth(0.0);
+        }
     }
 }

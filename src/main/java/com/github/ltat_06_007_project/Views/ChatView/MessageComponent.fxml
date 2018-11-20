@@ -8,10 +8,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.TextFlow?>
 
-
 <HBox xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ltat_06_007_project.Views.ChatView.MessageComponentController">
    <children>
-      <Region fx:id="leftRegion" />
+      <Region fx:id="leftRegion" HBox.hgrow="ALWAYS" />
       <VBox fx:id="messageContainer" style="-fx-background-color: #dbe2ef;">
          <children>
             <HBox>
@@ -38,6 +37,6 @@
             </HBox>
          </children>
       </VBox>
-      <Region fx:id="rightRegion" />
+      <Region fx:id="rightRegion" HBox.hgrow="ALWAYS" />
    </children>
 </HBox>
