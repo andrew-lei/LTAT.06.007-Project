@@ -7,6 +7,7 @@ import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.Objects.ContactObject;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import com.github.ltat_06_007_project.Views.ChatView.ChatViewController;
+import org.digidoc4j.Container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -186,7 +187,8 @@ public class TcpConnection {
 
 
         log.info("established outgoing TCP connection with {}",socket.getInetAddress().getHostAddress());
-        PublicKey contactPublicKey = Cryptography.keyFromBytes(optionalContactObject.get().getPublicKey());
+        Container contactPublicKeyContainer = Cryptography.containerFromBytes(optionalContactObject.get().getPublicKey());
+        PublicKey contactPublicKey = Cryptography.keyFromBytes((contactPublicKeyContainer).getDataFiles().get(0).getBytes());
         outputStream.writeUTF(MainApplication.userIdCode);
         outputStream.flush();
 

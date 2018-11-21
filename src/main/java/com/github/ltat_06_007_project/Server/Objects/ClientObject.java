@@ -16,11 +16,9 @@ public class ClientObject {
     public String getClientId() {
         return clientId;
     }
-
     public String getPublicKey() {
         return publicKey;
     }
-
     public Socket getSocket() {
         return socket;
     }
