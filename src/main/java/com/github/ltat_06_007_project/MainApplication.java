@@ -35,12 +35,12 @@ public class MainApplication extends Application {
     private Scene scene;
 
     public static PrivateKey privateKey;
-    public static PublicKey publicKey;
+    public static Container signedPublicKey;
     public static String userIdCode = "39430121338";
     public static final ObjectMapper mapper = new ObjectMapper();
 
     public static void main(final String[] args) throws IOException {
-        login("1234567890123456",".");
+        //login("1234567890123456",".");
         launch(MainApplication.class, args);
     }
 
@@ -82,9 +82,8 @@ public class MainApplication extends Application {
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
 
         }
-        Container container = Cryptography.containerFromB64Bytes(Files.readAllBytes(Paths.get(keyPath + "/user.pub")));
-        publicKey = Cryptography.keyFromBytes(Cryptography.getData(container));
-        userIdCode = container.getSignatures().get(0).getSigningCertificate().getSubjectName(X509Cert.SubjectName.SERIALNUMBER);
+        Container signedPublicKey = Cryptography.containerFromB64Bytes(Files.readAllBytes(Paths.get(keyPath + "/user.pub")));
+        userIdCode = signedPublicKey.getSignatures().get(0).getSigningCertificate().getSubjectName(X509Cert.SubjectName.SERIALNUMBER);
 
     }
 

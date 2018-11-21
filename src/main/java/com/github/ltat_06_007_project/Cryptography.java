@@ -28,9 +28,6 @@ public class Cryptography {
 
     public static void genKeyPair(String keyPath, String password, char[] pin) throws IOException {
         try {
-            //Cryptography.signKey("cert.key","C:/Windows/SysWOW64/onepin-opensc-pkcs11.dll",new char[]{'2','3','2','5'}, "signed.pub");
-            //sign the public key
-            //start the engine
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(2048);
             KeyPair kp = keyGen.generateKeyPair();

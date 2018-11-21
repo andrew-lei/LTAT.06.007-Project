@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
@@ -55,7 +56,9 @@ public class NetworkNodeController {
 
     private void sharePublicKey() {
         try (DatagramSocket socket = new DatagramSocket()) {
-            String serializedKey =  MainApplication.mapper.writeValueAsString(new PublicKeyShare(MainApplication.publicKey.getEncoded(),MainApplication.userIdCode));
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            MainApplication.signedPublicKey.save(os);
+            String serializedKey =  MainApplication.mapper.writeValueAsString(new PublicKeyShare(os.toByteArray(),MainApplication.userIdCode));
             byte[] packetBytes = MainApplication.mapper.writeValueAsBytes(new NetworkMessageWrapper(2,serializedKey));
             advertisePacket(socket,60000, packetBytes);
         } catch(SocketException e) {
