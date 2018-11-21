@@ -66,8 +66,7 @@ public class NetworkNodeController {
                 }
             }
 
-            MainApplication.signedPublicKey.save(os);
-            String serializedKey = MainApplication.mapper.writeValueAsString(new PublicKeyShare(os.toByteArray(), MainApplication.userIdCode));
+            String serializedKey = MainApplication.mapper.writeValueAsString(new PublicKeyShare(MainApplication.signedPublicKey, MainApplication.userIdCode));
             byte[] packetBytes = MainApplication.mapper.writeValueAsBytes(new NetworkMessageWrapper(2, serializedKey));
             advertisePacket(socket, 60000, packetBytes);
         } catch(SocketException e) {
@@ -129,7 +128,7 @@ public class NetworkNodeController {
             while(!Thread.interrupted()) {
 
                 try {
-                    DatagramPacket packet = new DatagramPacket(new byte[1024], 0, 1024);
+                    DatagramPacket packet = new DatagramPacket(new byte[19024], 0, 19024);
                     socket.receive(packet);
 
                     log.info("received packet from {}", packet.getAddress().getHostAddress());
@@ -189,6 +188,7 @@ public class NetworkNodeController {
                     }
                     log.info("got contact request");
                 } else if (networkMessageWrapper.getMessageType() == 2) {
+
                     String publicKeyShareSerialized = networkMessageWrapper.getSerializedMessage();
                     PublicKeyShare publicKeyShare = MainApplication.mapper.readValue(publicKeyShareSerialized, PublicKeyShare.class);
                     contactModel.updatePublicKey(publicKeyShare.getId(), publicKeyShare.getPublicKey());
