@@ -1,6 +1,7 @@
 package com.github.ltat_06_007_project.Controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.github.ltat_06_007_project.Configuration;
 import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.NetworkMessage.ContactRequest;
@@ -93,7 +94,7 @@ public class NetworkNodeController {
 
             log.info("sent out advertisment");
             DatagramPacket packet = new DatagramPacket(packetBytes, packetBytes.length);
-            packet.setPort(42069);
+            packet.setPort(Configuration.getPort());
             socket.setBroadcast(true);
             try {
                 packet.setAddress(InetAddress.getByName("255.255.255.255"));
@@ -151,7 +152,7 @@ public class NetworkNodeController {
                     DatagramPacket packet = new DatagramPacket(messageBytes, 0, messageBytes.length);
                     for (String address: networkNodeAddressSet) {
                         try {
-                            packet.setPort(42069);
+                            packet.setPort(Configuration.getPort());
                             packet.setAddress(InetAddress.getByName(address));
                             socket.send(packet);
                             //log.info("sent packet to {}", packet.getAddress().getHostAddress());

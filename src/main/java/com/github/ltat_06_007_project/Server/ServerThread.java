@@ -8,8 +8,10 @@ public class ServerThread extends Thread {
     private PublicKey publicKey;
     private SecretKey secretKey;
 
-    public ServerThread(int port) {
+    public ServerThread(int port, PublicKey publicKey, SecretKey secretKey) {
         this.port = port;
+        this.publicKey = publicKey;
+        this.secretKey = secretKey;
     }
 
     @Override

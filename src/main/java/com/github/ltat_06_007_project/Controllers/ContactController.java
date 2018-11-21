@@ -31,7 +31,7 @@ public class ContactController {
     public List<ContactObject> getAllContacts() {
         return contactModel.getAll()
                 .stream()
-                .filter(c -> c.getAllowed())
+                .filter(c -> c.isAllowed())
                 .collect(Collectors.toList());
     }
 }

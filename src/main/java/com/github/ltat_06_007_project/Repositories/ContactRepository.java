@@ -3,7 +3,6 @@ package com.github.ltat_06_007_project.Repositories;
 import com.github.ltat_06_007_project.Objects.ContactObject;
 import org.springframework.stereotype.Component;
 
-import javax.swing.plaf.nimbus.State;
 import java.io.File;
 import java.io.IOException;
 import java.sql.*;
@@ -51,7 +50,7 @@ public class ContactRepository {
             preparedStatement.setBytes(2, contactObject.getSymmetricKey());
             preparedStatement.setBytes(3, contactObject.getPublicKey());
             preparedStatement.setString(4, contactObject.getIpAddress());
-            preparedStatement.setInt(5, contactObject.getAllowed() ? 1 : 0);
+            preparedStatement.setInt(5, contactObject.isAllowed() ? 1 : 0);
             preparedStatement.executeUpdate();
         }
 
@@ -66,7 +65,7 @@ public class ContactRepository {
             preparedStatement.setBytes(1, contactObject.getSymmetricKey());
             preparedStatement.setString(2, contactObject.getIpAddress());
             preparedStatement.setBytes(3, contactObject.getPublicKey());
-            preparedStatement.setInt(4, contactObject.getAllowed() ? 1 : 0);
+            preparedStatement.setInt(4, contactObject.isAllowed() ? 1 : 0);
             preparedStatement.setString(5, contactObject.getIdCode());
             preparedStatement.executeUpdate();
         }

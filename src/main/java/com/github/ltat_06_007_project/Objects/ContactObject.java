@@ -7,6 +7,7 @@ public class ContactObject {
     private final byte[] publicKey;
     private final String ipAddress;
     private final boolean allowed;
+    private final boolean local;
 
     public ContactObject(String idCode, byte[] symmetricKey, byte[] publicKey, String ipAddress, boolean allowed) {
         this.idCode = idCode;
@@ -14,6 +15,16 @@ public class ContactObject {
         this.publicKey = publicKey;
         this.ipAddress = ipAddress;
         this.allowed = allowed;
+        this.local = true;
+    }
+
+    public ContactObject(String idCode, byte[] symmetricKey, byte[] publicKey, String ipAddress, boolean allowed, boolean local) {
+        this.idCode = idCode;
+        this.symmetricKey = symmetricKey;
+        this.publicKey = publicKey;
+        this.ipAddress = ipAddress;
+        this.allowed = allowed;
+        this.local = local;
     }
 
     public String getIdCode() {
@@ -31,7 +42,10 @@ public class ContactObject {
         return publicKey;
     }
 
-    public boolean getAllowed() {
+    public boolean isAllowed() {
         return allowed;
+    }
+    public boolean isLocal() {
+        return local;
     }
 }

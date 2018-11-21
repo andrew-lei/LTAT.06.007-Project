@@ -156,7 +156,7 @@ public class TcpConnection {
             return;
         }
 
-        if (optionalContactObject.get().getAllowed()) {
+        if (optionalContactObject.get().isAllowed()) {
             outputStream.writeUTF(MainApplication.userIdCode);
             outputStream.flush();
             byte[] encryptedKey = Base64.getDecoder().decode(inputStream.readUTF());
