@@ -130,7 +130,7 @@ public class ChatViewController implements Initializable {
         MessageComponentController messageController = (MessageComponentController)fxmlLoader.getController();
         messageController.SetMessageSent(message.getMessageSentTime().toString());
         messageController.SetMessageText(message.getContent());
-        messageController.setMessageAlignment(message.getSenderId().equals(MainApplication.userIdCode));
+        messageController.setMessageAlignment(message.getReceiverId().equals(MainApplication.userIdCode));
         chatBox.getItems().add(messageComponent);
 
     }
