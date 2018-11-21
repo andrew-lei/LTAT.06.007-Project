@@ -66,7 +66,7 @@ public class MainApplication extends Application {
         stage.show();
     }
 
-    private static void login(String password, String keyPath) throws IOException {
+    public static void login(String password, String keyPath) throws IOException {
 
         byte[] encryptedPrivateKey = Files.readAllBytes(Paths.get(keyPath + "/user.key"));
         SecretKey key = new SecretKeySpec(password.getBytes(), "AES");
@@ -87,7 +87,7 @@ public class MainApplication extends Application {
 
     }
 
-    private static void createUser(String password, String keyPath, char[] pin) throws IOException {
+    public static void createUser(String password, String keyPath, char[] pin) throws IOException {
         Cryptography.genKeyPair(keyPath, password, pin);
         login(password, keyPath);
     }
