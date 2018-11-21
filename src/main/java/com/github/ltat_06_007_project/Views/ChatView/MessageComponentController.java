@@ -32,7 +32,6 @@ public class MessageComponentController {
         this.messageSentTime.setText(messageSent);
     }
     void setMessageAlignment(boolean leftAlignment){
-        messageTextFlow.setTextAlignment(leftAlignment? TextAlignment.LEFT : TextAlignment.RIGHT);
         if(leftAlignment){
             leftRegion.setMaxWidth(0.0);
         }else{

@@ -8,13 +8,15 @@ import java.util.Date;
 public class MessageObject {
 
     private final String content;
-    private final String contactId;
+    private final String senderId;
+    private final String receiverId;
     private final Date messageSentTime;
 
     @JsonCreator
-    public MessageObject(@JsonProperty("content")String content, @JsonProperty("contactId")String contactId, @JsonProperty("messageSentTime")Date messageSentTime) {
+    public MessageObject(@JsonProperty("content")String content, @JsonProperty("senderId")String senderId,  @JsonProperty("receiverId")String receiverId, @JsonProperty("messageSentTime")Date messageSentTime) {
         this.content = content;
-        this.contactId = contactId;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
         this.messageSentTime = messageSentTime;
     }
 
@@ -22,8 +24,11 @@ public class MessageObject {
         return content;
     }
 
-    public String getContactId() {
-        return contactId;
+    public String getSenderId() {
+        return senderId;
     }
     public Date getMessageSentTime(){ return messageSentTime; }
+    public String getReceiverId() {
+        return receiverId;
+    }
 }
