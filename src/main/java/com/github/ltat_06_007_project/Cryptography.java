@@ -24,21 +24,33 @@ import org.digidoc4j.X509Cert;
 import org.digidoc4j.X509Cert.SubjectName;
 
 public class Cryptography {
-    public static void genKeyPair(String outFile) throws IOException {
+
+
+    public static void genKeyPair(String keyPath, String password, char[] pin) throws IOException {
         try {
+            //Cryptography.signKey("cert.key","C:/Windows/SysWOW64/onepin-opensc-pkcs11.dll",new char[]{'2','3','2','5'}, "signed.pub");
+            //sign the public key
+            //start the engine
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(2048);
             KeyPair kp = keyGen.generateKeyPair();
             byte[] publicKey = kp.getPublic().getEncoded();
             byte[] privateKey = kp.getPrivate().getEncoded();
 
-            FileOutputStream out = new FileOutputStream(outFile + ".key");
+            SecretKey key = new SecretKeySpec(password.getBytes(), "AES");
+            privateKey = Cryptography.encryptText(key, privateKey);
+
+            FileOutputStream out = new FileOutputStream(keyPath + "/user.key");
             out.write(privateKey);
             out.close();
 
-            out = new FileOutputStream(outFile + ".pub");
+            out = new FileOutputStream(keyPath + "/user.pub");
             out.write(publicKey);
             out.close();
+
+
+            Cryptography.signKey(keyPath + "/user.pub","C:/Windows/SysWOW64/onepin-opensc-pkcs11.dll",pin,keyPath + "/user.pub");
+
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }

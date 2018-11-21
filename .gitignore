@@ -20,3 +20,5 @@
 database.db
 cert.pub
 cert.key
+user.key
+user.pub
