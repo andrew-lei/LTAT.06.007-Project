@@ -190,7 +190,7 @@ public class TcpConnection {
 
 
         log.info("established outgoing TCP connection with {}",socket.getInetAddress().getHostAddress());
-        Container contactPublicKeyContainer = Cryptography.containerFromBytes(optionalContactObject.get().getPublicKey());
+        Container contactPublicKeyContainer = Cryptography.containerFromB64Bytes(optionalContactObject.get().getPublicKey());
         PublicKey contactPublicKey = Cryptography.keyFromBytes((contactPublicKeyContainer).getDataFiles().get(0).getBytes());
         outputStream.writeUTF(MainApplication.userIdCode);
         outputStream.flush();
