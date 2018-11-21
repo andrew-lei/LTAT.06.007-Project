@@ -21,6 +21,8 @@ public class LoginViewController {
     @FXML
     private PasswordField passwordField;
     @FXML
+    private PasswordField pinField;
+    @FXML
     private TextField keyPath;
     @FXML
     private Button loginButton;
@@ -37,14 +39,25 @@ public class LoginViewController {
         this.springContext = context;
     }
     @FXML
-    void createAccount(ActionEvent event) {
+    void createAccount(ActionEvent event) throws IOException {
         //Todo:create user keys etc.
-
+        char[] pin = pinField.getText().toCharArray();
+        String password = passwordField.getText();
+        String keyLocation = keyPath.getText();
+        MainApplication.createUser(password, keyLocation, pin);
+        openChatWindoe();
     }
 
     @FXML
     void loginAction(ActionEvent event)throws IOException {
-    //ToDo: Validate user
+        //ToDo: handle exception
+        String password = passwordField.getText();
+        String keyLocation = keyPath.getText();
+        MainApplication.login(password, keyLocation);
+        openChatWindoe();
+
+    }
+    private void openChatWindoe()throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ChatView.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
         Parent root = fxmlLoader.load();
@@ -52,7 +65,6 @@ public class LoginViewController {
         this.stage = new Stage();
         stage.setScene(scene);
         stage.show();
-
     }
 
 }

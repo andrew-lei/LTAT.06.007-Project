@@ -7,9 +7,9 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="password" prefHeight="281.0" prefWidth="441.0" style="-fx-background-color: #3f72af;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ltat_06_007_project.Views.LoginView.LoginViewController">
+<AnchorPane fx:id="password" prefHeight="281.0" prefWidth="441.0" style="-fx-background-color: #3f72af;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.ltat_06_007_project.Views.LoginView.LoginViewController">
    <children>
-       <Button fx:id="loginButton" layoutX="107.0" layoutY="172.0" mnemonicParsing="false" onAction="#loginAction" style="-fx-background-color: #f9f7f7;" text="Log in" textFill="#3f72af">
+       <Button fx:id="loginButton" layoutX="107.0" layoutY="189.0" mnemonicParsing="false" onAction="#loginAction" style="-fx-background-color: #f9f7f7;" text="Log in" textFill="#3f72af">
          <font>
             <Font name="SansSerif Regular" size="18.0" />
          </font></Button>
@@ -18,12 +18,13 @@
             <Font name="SansSerif Regular" size="36.0" />
          </font>
       </Label>
-      <Button fx:id="createAccountButton" layoutX="192.0" layoutY="172.0" mnemonicParsing="false" onAction="#createAccount" style="-fx-background-color: #f9f7f7;" text="Create new" textFill="#3f72af">
+      <Button fx:id="createAccountButton" layoutX="192.0" layoutY="189.0" mnemonicParsing="false" onAction="#createAccount" style="-fx-background-color: #f9f7f7;" text="Create new" textFill="#3f72af">
          <font>
             <Font name="SansSerif Regular" size="18.0" />
          </font>
       </Button>
-      <PasswordField layoutX="107.0" layoutY="87.0" opacity="0.9" prefHeight="25.0" prefWidth="202.0" promptText="Password" />
-      <TextField fx:id="keyPath" layoutX="107.0" layoutY="128.0" opacity="0.9" prefHeight="25.0" prefWidth="202.0" promptText="Key path" />
+      <PasswordField fx:id="passwordField" layoutX="107.0" layoutY="84.0" opacity="0.9" prefHeight="25.0" prefWidth="202.0" promptText="Password" />
+      <TextField fx:id="keyPath" layoutX="107.0" layoutY="116.0" opacity="0.9" prefHeight="25.0" prefWidth="202.0" promptText="Key path" />
+      <PasswordField fx:id="pinField" layoutX="107.0" layoutY="147.0" opacity="0.9" prefHeight="25.0" prefWidth="202.0" promptText="PIN1" />
    </children>
 </AnchorPane>
