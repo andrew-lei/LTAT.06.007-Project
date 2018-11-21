@@ -98,7 +98,7 @@ public class ChatViewController implements Initializable {
         MessageObject message = chatController.addMessage(messageBox.getText(),currentContact);
         messageBox.clear();
         try {
-            createMessageBox(message.getContent(), new Date().toString(), false);
+            createMessageBox(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,7 +107,7 @@ public class ChatViewController implements Initializable {
     private void loadOutput(){
         chatController.getAllMessages(currentContact).forEach(m -> {
             try {
-                createMessageBox(m.getContent(), new Date().toString(), true);
+                createMessageBox(m);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -115,13 +115,13 @@ public class ChatViewController implements Initializable {
         chatBox.scrollTo(chatBox.getItems().size()-1);
     }
     @FXML
-    private void createMessageBox(String message, String messageSent, boolean sentToCurrentUser) throws IOException {
+    private void createMessageBox(MessageObject message) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("MessageComponent.fxml"));
         Object messageComponent = fxmlLoader.load();
         MessageComponentController messageController = (MessageComponentController)fxmlLoader.getController();
-        messageController.SetMessageSent(messageSent);
-        messageController.SetMessageText(message);
-        messageController.setMessageAlignment(sentToCurrentUser);
+        messageController.SetMessageSent(message.getMessageSentTime().toString());
+        messageController.SetMessageText(message.getContent());
+        messageController.setMessageAlignment(message.getContactId().equals(MainApplication.userIdCode));
         chatBox.getItems().add(messageComponent);
 
     }
@@ -149,7 +149,7 @@ public class ChatViewController implements Initializable {
     public void printMessageFromNetwork(){
         try {
             MessageObject message = messageQueue.take();
-            createMessageBox(message.getContent(), new Date().toString(), false);
+            createMessageBox(message);
         }
         catch(Exception e) {
         }
