@@ -1,11 +1,11 @@
 package com.github.ltat_06_007_project.Controllers;
 
+import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import com.github.ltat_06_007_project.Models.ChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,8 +22,8 @@ public class ChatController {
         this.connectionController = connectionController;
     }
     
-    public MessageObject addMessage(String content, String contactId) {
-        MessageObject message = chatModel.insertMessage(new MessageObject(content,contactId, new Date()));
+    public MessageObject addMessage(String content, String receiverId) {
+        MessageObject message = chatModel.insertMessage(new MessageObject(content, MainApplication.userIdCode, receiverId, new Date()));
         connectionController.sendMessage(message);
         return message;
     }
@@ -33,6 +33,6 @@ public class ChatController {
     }
 
     public List<MessageObject> getAllMessages(String contactId) {
-        return chatModel.getMessages().stream().filter(m -> m.getContactId().equals(contactId)).collect(Collectors.toList());
+        return chatModel.getMessages().stream().filter(m -> m.getSenderId().equals(contactId)).collect(Collectors.toList());
     }
 }

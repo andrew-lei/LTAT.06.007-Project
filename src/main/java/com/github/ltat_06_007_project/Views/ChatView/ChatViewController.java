@@ -3,27 +3,19 @@ package com.github.ltat_06_007_project.Views.ChatView;
 import com.github.ltat_06_007_project.Controllers.ChatController;
 import com.github.ltat_06_007_project.Controllers.ContactController;
 import com.github.ltat_06_007_project.MainApplication;
-import com.github.ltat_06_007_project.Objects.ContactObject;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -138,7 +130,7 @@ public class ChatViewController implements Initializable {
         MessageComponentController messageController = (MessageComponentController)fxmlLoader.getController();
         messageController.SetMessageSent(message.getMessageSentTime().toString());
         messageController.SetMessageText(message.getContent());
-        messageController.setMessageAlignment(message.getContactId().equals(MainApplication.userIdCode));
+        messageController.setMessageAlignment(message.getSenderId().equals(MainApplication.userIdCode));
         chatBox.getItems().add(messageComponent);
 
     }
@@ -166,7 +158,9 @@ public class ChatViewController implements Initializable {
     public void printMessageFromNetwork(){
         try {
             MessageObject message = messageQueue.take();
-            createMessageBox(message);
+            if(currentContact.equalsIgnoreCase(message.getSenderId())){
+                createMessageBox(message);
+            }
         }
         catch(Exception e) {
         }

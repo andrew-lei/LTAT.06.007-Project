@@ -1,6 +1,5 @@
 package com.github.ltat_06_007_project.Repositories;
 
-import com.github.ltat_06_007_project.Controllers.ConnectionController;
 import com.github.ltat_06_007_project.Objects.MessageObject;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +28,8 @@ public class MessageRepository {
         String sql = "CREATE TABLE IF NOT EXISTS message ("
                 + " id integer PRIMARY KEY AUTOINCREMENT,"
                 + " content text NOT NULL,"
-                + "contactId text NOT NULL,"
+                + "senderId text NOT NULL,"
+                + "receiverId text NOT NULL,"
                 + "messageSentTime INT NOT NULL"
                 + ");";
         try (Connection connection = DriverManager.getConnection(databaseAddress);
@@ -41,13 +41,14 @@ public class MessageRepository {
     }
 
     public MessageObject insertMessage(MessageObject messageObject) {
-        String sql = "INSERT INTO message(content,contactId, messageSentTime) VALUES(?,?,?)";
+        String sql = "INSERT INTO message(content,senderId, receiverId, messageSentTime) VALUES(?,?,?,?)";
 
         try (Connection connection = DriverManager.getConnection(databaseAddress);
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, messageObject.getContent());
-            preparedStatement.setString(2, messageObject.getContactId());
-            preparedStatement.setLong(3, messageObject.getMessageSentTime().getTime());
+            preparedStatement.setString(2, messageObject.getSenderId());
+            preparedStatement.setString(3, messageObject.getReceiverId());
+            preparedStatement.setLong(4, messageObject.getMessageSentTime().getTime());
             preparedStatement.executeUpdate();
             return messageObject;
         } catch (SQLException e) {
@@ -64,7 +65,7 @@ public class MessageRepository {
 
             List<MessageObject> allMessageObjects = new ArrayList<>();
             while (resultSet.next()) {
-                allMessageObjects.add(new MessageObject(resultSet.getString("content"),resultSet.getString("contactId"), new Date(resultSet.getLong("messageSentTime"))));
+                allMessageObjects.add(new MessageObject(resultSet.getString("content"),resultSet.getString("senderId"), resultSet.getString("receiverId"), new Date(resultSet.getLong("messageSentTime"))));
             }
             return allMessageObjects;
         } catch (SQLException e) {
