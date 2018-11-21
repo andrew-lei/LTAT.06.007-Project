@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -63,7 +64,24 @@ public class ChatViewController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         UserLabel.setText(MainApplication.userIdCode);
         loadContacts();
+        initMessageBox();
     }
+
+    private void initMessageBox() {
+        messageBox.setOnKeyPressed(event -> {
+            if (event.getCode() == KeyCode.ENTER) {
+                event.consume();
+                if (event.isShiftDown()) {
+                    messageBox.appendText(System.getProperty("line.separator"));
+                } else {
+                    if(!messageBox.getText().isEmpty()){
+                        sendMessage();
+                    }
+                }
+            }
+        });
+    }
+
     @Autowired
     public ChatViewController(ChatController chatController, ContactController contactController) {
         this.chatController = chatController;
@@ -85,7 +103,6 @@ public class ChatViewController implements Initializable {
         createContactBox(newContactField.getText());
         newContactField.clear();
     }
-
 
     public void setContact(String contactId) {
         currentContact = contactId;
