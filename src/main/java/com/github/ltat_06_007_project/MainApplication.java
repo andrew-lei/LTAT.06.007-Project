@@ -67,11 +67,8 @@ public class MainApplication extends Application {
     }
 
     public static void login(String password, String keyPath) throws IOException {
+        password = addPasswordPadding(password);
 
-        while (password.length() < 16) {
-            password = password + password;
-        }
-        password = password.substring(0,16);
         byte[] encryptedPrivateKey = Files.readAllBytes(Paths.get(keyPath + "/user.key"));
         SecretKey key = new SecretKeySpec(password.getBytes(), "AES");
         try {
@@ -92,12 +89,14 @@ public class MainApplication extends Application {
     }
 
     public static void createUser(String password, String keyPath, char[] pin) throws IOException {
-    private static void createUser(String password, String keyPath, char[] pin) throws IOException {
+        password = addPasswordPadding(password);
+        Cryptography.genKeyPair(keyPath, password, pin);
+        login(password, keyPath);
+    }
+    private static String addPasswordPadding(String password){
         while (password.length() < 16) {
             password = password + password;
         }
-        password = password.substring(0,16);
-        Cryptography.genKeyPair(keyPath, password, pin);
-        login(password, keyPath);
+        return password.substring(0,16);
     }
 }

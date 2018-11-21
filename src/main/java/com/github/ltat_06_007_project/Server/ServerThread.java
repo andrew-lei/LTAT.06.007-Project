@@ -6,14 +6,14 @@ import java.security.PublicKey;
 public class ServerThread extends Thread {
     private int port;
     private PublicKey publicKey;
-    private SecretKey ;
+    private SecretKey secretKey;
 
     public ServerThread(int port) {
         this.port = port;
     }
 
     @Override
-    public static void run(){
+    public void run(){
         while (!Thread.interrupted()){
 
         }
