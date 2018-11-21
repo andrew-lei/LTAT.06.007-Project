@@ -64,7 +64,7 @@ public class ContactModel {
                                                         ,oldContact.getSymmetricKey()
                                                         ,oldContact.getPublicKey()
                                                         ,ipAddress
-                                                        ,oldContact.getAllowed());
+                                                        ,oldContact.isAllowed());
             contactRepository.update(newContact);
             return true;
         } catch (SQLException e) {
@@ -80,7 +80,7 @@ public class ContactModel {
                     ,oldContact.getSymmetricKey()
                     ,publicKey
                     ,oldContact.getIpAddress()
-                    ,oldContact.getAllowed());
+                    ,oldContact.isAllowed());
             contactRepository.update(newContact);
             return true;
         } catch (SQLException e) {

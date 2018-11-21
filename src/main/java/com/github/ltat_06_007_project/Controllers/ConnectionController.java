@@ -43,7 +43,7 @@ public class ConnectionController implements ApplicationContextAware {
 
         this.allowedContacts = contactModel.getAll()
                 .stream()
-                .filter(ContactObject::getAllowed)
+                .filter(ContactObject::isAllowed)
                 .filter(c -> !c.getIdCode().equals(MainApplication.userIdCode))
                 .map(ContactObject::getIdCode)
                 .collect(Collectors.toCollection(CopyOnWriteArraySet::new));
