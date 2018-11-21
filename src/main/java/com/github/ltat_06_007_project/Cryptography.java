@@ -229,6 +229,15 @@ public class Cryptography {
                 build();
     }
 
+    public static Container containerFromBytes(byte[] input) {
+        Configuration config = new Configuration(Mode.TEST);
+        return ContainerBuilder.
+                aContainer().
+                withConfiguration(config).
+                fromStream(new ByteArrayInputStream(input)).
+                build();
+    }
+
     public static byte[] getData(Container container) {
         return container.getDataFiles().get(0).getBytes();
     }

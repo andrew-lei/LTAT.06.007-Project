@@ -39,7 +39,7 @@ public class MainApplication extends Application {
     public static String userIdCode = "39430121338";
     public static final ObjectMapper mapper = new ObjectMapper();
 
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args){
         //login("1234567890123456",".");
         launch(MainApplication.class, args);
     }
@@ -68,6 +68,10 @@ public class MainApplication extends Application {
 
     private static void login(String password, String keyPath) throws IOException {
 
+        while (password.length() < 16) {
+            password = password + password;
+        }
+        password = password.substring(0,16);
         byte[] encryptedPrivateKey = Files.readAllBytes(Paths.get(keyPath + "/user.key"));
         SecretKey key = new SecretKeySpec(password.getBytes(), "AES");
         try {
@@ -88,6 +92,10 @@ public class MainApplication extends Application {
     }
 
     private static void createUser(String password, String keyPath, char[] pin) throws IOException {
+        while (password.length() < 16) {
+            password = password + password;
+        }
+        password = password.substring(0,16);
         Cryptography.genKeyPair(keyPath, password, pin);
         login(password, keyPath);
     }
