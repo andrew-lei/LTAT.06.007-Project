@@ -148,6 +148,14 @@ public class ConnectionController implements ApplicationContextAware {
         }
     }
 
+
+    boolean isOnline(String id) {
+        synchronized (idToConnection) {
+            TcpConnection connection = idToConnection.get(id);
+            return connection.isOnline();
+        }
+    }
+
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
