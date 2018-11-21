@@ -36,6 +36,8 @@ public class TcpConnection {
     private final ChatModel chatModel;
     private final Executor executor;
 
+    private volatile boolean online = false;
+
 
     private final LinkedBlockingQueue<MessageObject> messageQueue = new LinkedBlockingQueue<>();
     private final Thread listenerThread;
@@ -161,6 +163,7 @@ public class TcpConnection {
             key = new SecretKeySpec(Cryptography.decryptBytes(MainApplication.privateKey,encryptedKey), "AES");
             log.info("connection from {} has been secured, starting communication", contactId);
             //TODO: sync states
+            online = true;
             executor.execute(senderThread);
             receive();
         } else {
@@ -210,6 +213,7 @@ public class TcpConnection {
             outputStream.writeUTF(Base64.getEncoder().encodeToString(encryptedKey));
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);
+            online = true;
             //TODO: sync states
             executor.execute(senderThread);
             receive();
@@ -262,4 +266,7 @@ public class TcpConnection {
         }
     }
 
+    public boolean isOnline() {
+        return online;
+    }
 }

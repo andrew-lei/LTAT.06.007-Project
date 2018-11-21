@@ -58,10 +58,19 @@ public class NetworkNodeController {
     private void sharePublicKey() {
         try (DatagramSocket socket = new DatagramSocket()) {
             ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+            while (MainApplication.signedPublicKey == null) {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+
             MainApplication.signedPublicKey.save(os);
-            String serializedKey =  MainApplication.mapper.writeValueAsString(new PublicKeyShare(os.toByteArray(),MainApplication.userIdCode));
-            byte[] packetBytes = MainApplication.mapper.writeValueAsBytes(new NetworkMessageWrapper(2,serializedKey));
-            advertisePacket(socket,60000, packetBytes);
+            String serializedKey = MainApplication.mapper.writeValueAsString(new PublicKeyShare(os.toByteArray(), MainApplication.userIdCode));
+            byte[] packetBytes = MainApplication.mapper.writeValueAsBytes(new NetworkMessageWrapper(2, serializedKey));
+            advertisePacket(socket, 60000, packetBytes);
         } catch(SocketException e) {
             throw new RuntimeException(e);
         } catch (JsonProcessingException e) {
