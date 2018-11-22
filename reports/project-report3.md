@@ -36,6 +36,9 @@ date: 22nd November 2018
 
 # Jüri
 
+- Started working on the server
+- Helped debug some code
+
 
 # Andrew
 
