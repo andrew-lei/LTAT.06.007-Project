@@ -25,21 +25,12 @@ date: 22nd November 2018
 
 ## Actual work done 
 
-- EID integration
+- EID integration (Andrew and Mattias)
+- Initial NAT traversal server (Jüri and Mattias)
+- QoL improvements (Tambet)
+- Some P2P operation optimizations(Mattias)
 
 # Next milestone
-
-
-# Mattias
-
-# Tambet
-
-# Jüri
-
-- Started working on the server
-- Helped debug some code
-
-
-# Andrew
-
-- Integrated EID signing into main body of code 
+- Sending messages to offline parties
+- NAT traversal server supports P2P operations
+- P2P operation optimization
