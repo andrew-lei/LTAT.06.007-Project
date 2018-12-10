@@ -1,17 +1,88 @@
 package com.github.ltat_06_007_project.Server.Controllers;
 
+import com.github.ltat_06_007_project.Controllers.TcpConnection;
+import com.github.ltat_06_007_project.Cryptography;
+import com.github.ltat_06_007_project.MainApplication;
+import com.github.ltat_06_007_project.Objects.MessageObject;
+import com.github.ltat_06_007_project.Server.Objects.ServerMessageObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
+import java.security.InvalidKeyException;
+import java.util.Base64;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class SocketController extends Thread {
+    private static final Logger log = LoggerFactory.getLogger(SocketController.class);
     private final Socket socket;
+    private DataInputStream inputStream;
+    private DataOutputStream outputStream;
 
-    public SocketController(Socket socket){
+    private final LinkedBlockingQueue<ServerMessageObject> messageQueue = new LinkedBlockingQueue<>();
+
+    private SecretKey key;
+    private String socketId;
+
+    public SocketController(String socketId, Socket socket ){
+        this.socketId = socketId;
         this.socket = socket;
+        try {
+            this.inputStream = new DataInputStream(socket.getInputStream());
+            this.outputStream = new DataOutputStream(socket.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    private void send(){
+        while (!Thread.interrupted()) {
+            try {
+                ServerMessageObject message = messageQueue.take();
+                byte[] serializedMessage = MainApplication.mapper.writeValueAsBytes(message);
+                String cypherText = Base64.getEncoder().encodeToString(Cryptography.encryptText(key, serializedMessage));
+                outputStream.writeUTF(cypherText);
+                outputStream.flush();
+                log.info("sent message to {}",socketId);
+            } catch (InterruptedException e) {
+                break;
+            } catch (IOException e) {
+                log.info("",e);
+                close();
+            }
+        }
+    }
+
+    private void receive() throws IOException {
+        while (!Thread.interrupted()) {
+            try {
+                byte[] cypherTextBytes = Base64.getDecoder().decode(inputStream.readUTF());
+                byte[] serializedMessage = Cryptography.decryptText(key, cypherTextBytes);
+                ServerMessageObject message = MainApplication.mapper.readValue(serializedMessage, ServerMessageObject.class);
+                // DO SOMETHING WITH MESSAGE
+                log.info("received message from {}",socketId);
+            } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
     public void run() {
         super.run();
+    }
+
+    private void close() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
