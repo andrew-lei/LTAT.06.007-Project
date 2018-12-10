@@ -149,9 +149,10 @@ public class ConnectionController implements ApplicationContextAware {
     }
 
 
-    boolean isOnline(String id) {
+    public boolean isOnline(String id) {
         synchronized (idToConnection) {
             TcpConnection connection = idToConnection.get(id);
+            if(connection == null) return false;
             return connection.isOnline();
         }
     }

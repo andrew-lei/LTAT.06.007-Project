@@ -5,6 +5,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import org.digidoc4j.Container;
 import org.digidoc4j.Signature;
@@ -31,8 +32,9 @@ import java.security.spec.RSAPublicKeySpec;
 @SpringBootApplication
 public class MainApplication extends Application {
 
-    private ConfigurableApplicationContext springContext;
+    private static ConfigurableApplicationContext springContext;
     private Scene scene;
+    private static Stage stage;
 
     public static PrivateKey privateKey;
     public static byte[] signedPublicKey;
@@ -56,17 +58,20 @@ public class MainApplication extends Application {
 
     @Override
     public void stop() {
-        springContext.stop();
+        //ToDo: Close all running threads
+        springContext.close();
     }
 
     @Override
     public void start(Stage stage) {
+        this.stage = stage;
+        stage.setOnCloseRequest( event -> stop() );
         stage.setTitle("EID IM");
         stage.setScene(scene);
         stage.show();
     }
 
-    public static void login(String password, String keyPath) throws IOException {
+    public static void login(String password, String keyPath) throws Exception {
         password = addPasswordPadding(password);
 
         byte[] encryptedPrivateKey = Files.readAllBytes(Paths.get(keyPath + "/user.key"));
@@ -81,14 +86,14 @@ public class MainApplication extends Application {
             }
 
         } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-
+            throw e;
         }
         signedPublicKey = Files.readAllBytes(Paths.get(keyPath + "/user.pub"));
         userIdCode = Cryptography.containerFromB64Bytes(signedPublicKey).getSignatures().get(0).getSigningCertificate().getSubjectName(X509Cert.SubjectName.SERIALNUMBER);
 
     }
 
-    public static void createUser(String password, String keyPath, char[] pin) throws IOException {
+    public static void createUser(String password, String keyPath, char[] pin) throws Exception {
         password = addPasswordPadding(password);
         Cryptography.genKeyPair(keyPath, password, pin);
         login(password, keyPath);
@@ -98,5 +103,18 @@ public class MainApplication extends Application {
             password = password + password;
         }
         return password.substring(0,16);
+    }
+    public void openChatWindow()throws IOException{
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ChatView.fxml"));
+        fxmlLoader.setControllerFactory(springContext::getBean);
+        Parent root = fxmlLoader.load();
+        Scene chatScene = new Scene(root);
+        stage.setScene(chatScene);
+    }
+    public void displayAlert(String header, String content){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

@@ -1,6 +1,7 @@
 package com.github.ltat_06_007_project.Views.ChatView;
 
 import com.github.ltat_06_007_project.Controllers.ChatController;
+import com.github.ltat_06_007_project.Controllers.ConnectionController;
 import com.github.ltat_06_007_project.Controllers.ContactController;
 import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Objects.MessageObject;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ResourceBundle;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -42,6 +44,7 @@ public class ChatViewController implements Initializable {
 
     private ChatController chatController;
     private ContactController contactController;
+    private ConnectionController connectionController;
     @FXML
     private Button addContactButton;
 
@@ -75,9 +78,11 @@ public class ChatViewController implements Initializable {
     }
 
     @Autowired
-    public ChatViewController(ChatController chatController, ContactController contactController) {
+    public ChatViewController(ChatController chatController, ContactController contactController, ConnectionController connectionController) {
         this.chatController = chatController;
         this.contactController = contactController;
+        this.connectionController = connectionController;
+
     }
     private void loadContacts(){
         contactController.getAllContacts().forEach(c -> createContactBox(c.getIdCode()));
@@ -100,6 +105,7 @@ public class ChatViewController implements Initializable {
         currentContact = contactId;
         participants.setText(contactId);
         chatBox.getItems().clear();
+        setOnlineStatus(contactId);
         loadOutput();
     }
 
@@ -122,6 +128,9 @@ public class ChatViewController implements Initializable {
             }
         });
         chatBox.scrollTo(chatBox.getItems().size()-1);
+    }
+    private void setOnlineStatus(String id){
+        this.onlineStatus.setText(this.connectionController.isOnline(id) ? "Online" : "Offline");
     }
     @FXML
     private void createMessageBox(MessageObject message) throws IOException {
