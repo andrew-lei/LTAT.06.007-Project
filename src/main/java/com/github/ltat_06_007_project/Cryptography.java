@@ -25,7 +25,7 @@ public class Cryptography {
 
     private static Configuration configuration;
 
-    public static void init() {
+    static void init() {
         configuration = new Configuration(Mode.TEST);
         configuration.getTSL().refresh();
     }
@@ -38,7 +38,7 @@ public class Cryptography {
         }
     }
 
-    public static void generateKeyPair(String filepath, String password, char[] pin) throws IOException {
+    static void generateKeyPair(String filepath, String password, char[] pin) throws IOException {
         try {
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
             keyGen.initialize(2048);
@@ -86,7 +86,7 @@ public class Cryptography {
         }
     }
 
-    public static PrivateKey readPrivateKey(String filepath, String password) throws IOException {
+    static PrivateKey readPrivateKey(String filepath, String password) throws IOException {
         Path path = Paths.get(filepath);
         byte[] bytes = Files.readAllBytes(path);
 
@@ -101,7 +101,7 @@ public class Cryptography {
         }
     }
 
-    public static byte[] readPublicKeyContainer(String filepath) throws IOException {
+    static byte[] readPublicKeyContainer(String filepath) throws IOException {
         return Files.readAllBytes(Paths.get(filepath+"/user.pub"));
     }
 
@@ -115,9 +115,8 @@ public class Cryptography {
     }
 
 
-    public static PublicKey publicKeyFromBytes(byte[] bytes) {
-        /* Generate private key.*/
-        X509EncodedKeySpec ks = new X509EncodedKeySpec(bytes);
+    public static PublicKey getPublicKey(Container container) {
+        X509EncodedKeySpec ks = new X509EncodedKeySpec(container.getDataFiles().get(0).getBytes());
         try {
             KeyFactory kf = KeyFactory.getInstance("RSA");
             return kf.generatePublic(ks);
@@ -126,12 +125,8 @@ public class Cryptography {
         }
     }
 
-    public static PublicKey getPublicKey(Container container) {
-        return publicKeyFromBytes(container.getDataFiles().get(0).getBytes());
-    }
-
-    public static List<String> getSignerInfo(Container container) {
-        List<String> retList = new ArrayList<String>();
+    static List<String> getSignerInfo(Container container) {
+        List<String> retList = new ArrayList<>();
         Signature signature = container.getSignatures().get(0);
         X509Cert certificate = signature.getSigningCertificate();
 
@@ -160,8 +155,9 @@ public class Cryptography {
         byte[] keyBytes = secretKey.getEncoded();
         try {
             Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(keyBytes));
-        } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException e) {
             throw new RuntimeException(e);
         }
     }
