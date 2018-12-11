@@ -174,5 +174,10 @@ public class ChatViewController implements Initializable {
         catch(Exception e) {
         }
     }
+    public void connectionChanged(String id, boolean isOnline){
+        if(currentContact.toLowerCase().equals(id.toLowerCase())){
+            onlineStatus.setText(isOnline ? "Online" : "Offline");
+        }
+    }
 
 }
