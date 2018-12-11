@@ -165,4 +165,12 @@ public class ConnectionController implements ApplicationContextAware {
     public void addConnection(String contactId) {
         allowedContacts.add(contactId);
     }
+
+    public void removeConnection(String contactId) {
+        allowedContacts.remove(contactId);
+        TcpConnection connection = idToConnection.get(contactId);
+        if (connection != null){
+            connection.close();
+        }
+    }
 }

@@ -105,4 +105,13 @@ public class ContactRepository {
         boolean allowed = resultSet.getInt("allowed") != 0;
         return new ContactObject(identificationCode, symmetricKey, publicKey, ipAddress, allowed);
     }
+
+    public void removeByIdCode(String text) throws SQLException {
+        String sql = "DELETE FROM contact WHERE identificationCode = \"" + text + "\"";
+
+        try (Connection connection = DriverManager.getConnection(databaseAddress);
+             Statement statement = connection.createStatement() ) {
+            statement.execute(sql);
+        }
+    }
 }

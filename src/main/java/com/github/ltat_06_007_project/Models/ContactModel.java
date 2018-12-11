@@ -93,4 +93,8 @@ public class ContactModel {
 
         }
     }
+
+    public void removeContact(String text) throws SQLException {
+        contactRepository.removeByIdCode(text);
+    }
 }
