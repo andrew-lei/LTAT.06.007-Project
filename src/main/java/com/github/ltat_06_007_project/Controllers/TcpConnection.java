@@ -132,7 +132,9 @@ public class TcpConnection {
         } catch (Exception e) {
             log.info("",e);
         } finally {
-            chatViewController.connectionChanged(contactId,false);
+            if (contactId != null) {
+                chatViewController.connectionChanged(contactId,false);
+            }
             close();
         }
     }

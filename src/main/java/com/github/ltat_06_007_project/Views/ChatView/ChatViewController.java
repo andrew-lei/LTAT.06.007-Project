@@ -17,8 +17,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Array;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Component
@@ -175,10 +179,34 @@ public class ChatViewController implements Initializable {
         catch(Exception e) {
         }
     }
+
+    private LinkedBlockingQueue<List<String>> queue =  new LinkedBlockingQueue<>();
+
     public void connectionChanged(String id, boolean isOnline){
-        if(currentContact.toLowerCase().equals(id.toLowerCase())){
-            onlineStatus.setText(isOnline ? "Online" : "Offline");
+        if (id == null) {
+            return;
         }
+        List<String> temp = new ArrayList<String>();
+        temp.add(id);
+        if (isOnline) {
+            temp.add("");
+        }
+        queue.add(temp);
+        Platform.runLater(this::test);
+    }
+
+    void test() {
+        try {
+            List<String> temp = queue.take();
+            boolean isOnline = temp.size() == 2;
+            if(currentContact != null && currentContact.toLowerCase().equals(temp.get(0).toLowerCase())){
+                onlineStatus.setText(isOnline ? "Online" : "Offline");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }
