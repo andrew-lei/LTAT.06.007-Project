@@ -226,7 +226,7 @@ public class TcpConnection {
     }
 
 
-    private void send()throws IOException  {
+    private void send() throws IOException  {
 
         chatViewController.connectionChanged(contactId,true);
         online = true;
@@ -300,7 +300,7 @@ public class TcpConnection {
             byte[] encodedhash = digest.digest(messageSum.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(encodedhash);
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
