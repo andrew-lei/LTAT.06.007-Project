@@ -25,13 +25,20 @@ import org.digidoc4j.X509Cert.SubjectName;
 
 public class Cryptography {
 
-    private static Configuration configuration;
+    private static Configuration config;
 
     public static void init() {
-        configuration = new Configuration(Mode.TEST);
-        configuration.getTSL().refresh();
+        config = new Configuration(Mode.TEST);
+        config.getTSL().refresh();
     }
 
+    private static byte[] hashPass(String password) {
+	try {
+	    return MessageDigest.getInstance("MD5").digest(password.getBytes());
+	} catch (NoSuchAlgorithmException e) {
+	    throw new RuntimeException(e);
+	}
+    }
 
     public static void genKeyPair(String keyPath, String password, char[] pin) throws IOException {
         try {
@@ -41,7 +48,7 @@ public class Cryptography {
             byte[] publicKey = kp.getPublic().getEncoded();
             byte[] privateKey = kp.getPrivate().getEncoded();
 
-            SecretKey key = new SecretKeySpec(password.getBytes(), "AES");
+            SecretKey key = new SecretKeySpec(hashPass(password), "AES");
             privateKey = Cryptography.encryptText(key, privateKey);
 
             FileOutputStream out = new FileOutputStream(keyPath + "/user.key");
@@ -90,6 +97,22 @@ public class Cryptography {
 
     public static byte[] readPubBytes(String filepath) throws IOException {
         return Files.readAllBytes(Paths.get(filepath));
+    }
+
+    public static PrivateKey readPrivateKey(String filepath, String password) throws IOException {
+        /* Read all bytes from the private key file*/
+        Path path = Paths.get(filepath);
+        byte[] bytes = Files.readAllBytes(path);
+
+        SecretKey key = new SecretKeySpec(hashPass(password), "AES");
+	try {
+            byte[] privateKey = Cryptography.decryptText(key, bytes);
+            PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(privateKey);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePrivate(ks);
+	} catch (BadPaddingException | InvalidKeyException | InvalidKeySpecException | IllegalBlockSizeException | NoSuchAlgorithmException e) {
+	    throw new RuntimeException(e);
+	}
     }
 
     public static PrivateKey readKey(String filepath) throws  IOException {
@@ -196,8 +219,34 @@ public class Cryptography {
         }
     }
 
+    public static String encryptText(String text, SecretKey key, String initVector) {
+        try {
+	    byte[] textBytes = text.getBytes();
+	    byte[] nonce = hashPass(initVector);
+
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "SunJCE");
+            cipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(128, nonce));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(textBytes));
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | IllegalBlockSizeException | BadPaddingException | InvalidKeyException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
+            throw new RuntimeException(e);
+        } 
+    }
+
+    public static String decryptText(String cipherText, SecretKey key, String initVector) {
+        try {
+	    byte[] ctextBytes = Base64.getDecoder().decode(cipherText.getBytes());
+	    byte[] nonce = hashPass(initVector);
+
+            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding", "SunJCE");
+            cipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(128, nonce));
+            return new String(cipher.doFinal(ctextBytes));
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchProviderException | InvalidAlgorithmParameterException e) {
+           throw new RuntimeException(e);
+        }
+    }
+
+
     public static void signKey(String keyPath, String certPath, char[] password, String destPath) throws IOException {
-        Configuration config = new Configuration(Mode.TEST);
         Container container = ContainerBuilder.
                 aContainer().
                 withConfiguration(config).
@@ -227,7 +276,6 @@ public class Cryptography {
     }
 
     public static Container containerFromB64Bytes(byte[] input) {
-        Configuration config = new Configuration(Mode.TEST);
         return ContainerBuilder.
                 aContainer().
                 withConfiguration(config).
@@ -237,7 +285,6 @@ public class Cryptography {
     }
 
     public static Container containerFromBytes(byte[] input) {
-        Configuration config = new Configuration(Mode.TEST);
         return ContainerBuilder.
                 aContainer().
                 withConfiguration(config).
@@ -247,6 +294,14 @@ public class Cryptography {
 
     public static byte[] getData(Container container) {
         return container.getDataFiles().get(0).getBytes();
+    }
+
+    public static PublicKey getPublicKey(Container container) {
+        return keyFromBytes(getData(container));
+    }
+
+    public static boolean validateSignature(Container container) {
+	return container.getSignatures().get(0).validateSignature().isValid();
     }
 
     public static List<String> getSignerInfo(Container container) {
