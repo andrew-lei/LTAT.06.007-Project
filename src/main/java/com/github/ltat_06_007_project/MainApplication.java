@@ -7,27 +7,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import org.digidoc4j.Container;
-import org.digidoc4j.Signature;
-import org.digidoc4j.X509Cert;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.*;
-
-import java.io.IOException;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.RSAPublicKeySpec;
 
 @SpringBootApplication
 public class MainApplication extends Application {
@@ -41,8 +25,8 @@ public class MainApplication extends Application {
     public static String userIdCode;
     public static final ObjectMapper mapper = new ObjectMapper();
 
-    public static void main(final String[] args) throws IOException {
-        //login("1234567890123456",".");
+    public static void main(final String[] args){
+        Cryptography.init();
         launch(MainApplication.class, args);
     }
 
@@ -58,13 +42,12 @@ public class MainApplication extends Application {
 
     @Override
     public void stop() {
-        //ToDo: Close all running threads
         springContext.close();
     }
 
     @Override
-    public void start(Stage stage) {
-        this.stage = stage;
+    public void start(Stage newStage) {
+        stage = newStage;
         stage.setOnCloseRequest( event -> stop() );
         stage.setTitle("EID IM");
         stage.setScene(scene);
@@ -72,38 +55,16 @@ public class MainApplication extends Application {
     }
 
     public static void login(String password, String keyPath) throws Exception {
-        password = addPasswordPadding(password);
-
-        byte[] encryptedPrivateKey = Files.readAllBytes(Paths.get(keyPath + "/user.key"));
-        SecretKey key = new SecretKeySpec(password.getBytes(), "AES");
-        try {
-            PKCS8EncodedKeySpec ks = new PKCS8EncodedKeySpec(Cryptography.decryptText(key, encryptedPrivateKey));
-            try {
-                KeyFactory kf = KeyFactory.getInstance("RSA");
-                privateKey = kf.generatePrivate(ks);
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                throw new RuntimeException(e);
-            }
-
-        } catch (InvalidKeyException | IllegalBlockSizeException | BadPaddingException e) {
-            throw e;
-        }
-        signedPublicKey = Files.readAllBytes(Paths.get(keyPath + "/user.pub"));
-        userIdCode = Cryptography.containerFromB64Bytes(signedPublicKey).getSignatures().get(0).getSigningCertificate().getSubjectName(X509Cert.SubjectName.SERIALNUMBER);
-
+        privateKey = Cryptography.readPrivateKey(keyPath,password);
+        signedPublicKey = Cryptography.readPublicKeyContainer(keyPath);
+        userIdCode = Cryptography.getSignerInfo(Cryptography.containerFromBytes(signedPublicKey)).get(0);
     }
 
     public static void createUser(String password, String keyPath, char[] pin) throws Exception {
-        password = addPasswordPadding(password);
-        Cryptography.genKeyPair(keyPath, password, pin);
+        Cryptography.generateKeyPair(keyPath, password, pin);
         login(password, keyPath);
     }
-    private static String addPasswordPadding(String password){
-        while (password.length() < 16) {
-            password = password + password;
-        }
-        return password.substring(0,16);
-    }
+
     public void openChatWindow()throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ChatView.fxml"));
         fxmlLoader.setControllerFactory(springContext::getBean);
