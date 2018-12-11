@@ -32,7 +32,9 @@ public class ChatController {
         return chatModel.getMessages();
     }
 
-    public List<MessageObject> getAllMessages(String contactId) {
-        return chatModel.getMessages().stream().filter(m -> m.getSenderId().equals(contactId)).collect(Collectors.toList());
+    public List<MessageObject> getAllMessages(String contactId, String userId) {
+        return chatModel.getMessages().stream().filter(m ->
+                m.getSenderId().equals(contactId) && m.getReceiverId().equals(userId) ||
+                        m.getSenderId().equals(userId) && m.getReceiverId().equals(contactId)).collect(Collectors.toList());
     }
 }

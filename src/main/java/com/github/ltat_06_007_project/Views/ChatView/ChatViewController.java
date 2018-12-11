@@ -120,7 +120,7 @@ public class ChatViewController implements Initializable {
         chatBox.scrollTo(chatBox.getItems().size()-1);
     }
     private void loadOutput(){
-        chatController.getAllMessages(currentContact).forEach(m -> {
+        chatController.getAllMessages(currentContact, MainApplication.userIdCode).forEach(m -> {
             try {
                 createMessageBox(m);
             } catch (IOException e) {
