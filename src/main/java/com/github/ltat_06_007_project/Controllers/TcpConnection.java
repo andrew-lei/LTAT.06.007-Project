@@ -129,6 +129,7 @@ public class TcpConnection {
         } catch (Exception e) {
             log.info("",e);
         } finally {
+            chatViewController.connectionChanged(contactId,false);
             close();
         }
     }
@@ -158,6 +159,7 @@ public class TcpConnection {
             key = Cryptography.decryptAESKey(inputStream.readUTF(),MainApplication.privateKey);
             log.info("connection from {} has been secured, starting communication", contactId);
             //TODO: sync states
+            chatViewController.connectionChanged(contactId,true);
             online = true;
             executor.execute(senderThread);
             receive();
@@ -208,6 +210,7 @@ public class TcpConnection {
             outputStream.writeUTF(encryptedKey);
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);
+            chatViewController.connectionChanged(contactId,true);
             online = true;
             //TODO: sync states
             executor.execute(senderThread);
