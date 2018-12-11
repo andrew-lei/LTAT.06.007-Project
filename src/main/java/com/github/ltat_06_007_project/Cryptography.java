@@ -25,6 +25,13 @@ import org.digidoc4j.X509Cert.SubjectName;
 
 public class Cryptography {
 
+    private static Configuration configuration;
+
+    public static void init() {
+        configuration = new Configuration(Mode.TEST);
+        configuration.getTSL().refresh();
+    }
+
 
     public static void genKeyPair(String keyPath, String password, char[] pin) throws IOException {
         try {
