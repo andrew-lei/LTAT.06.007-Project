@@ -84,7 +84,8 @@ public class ChatViewController implements Initializable {
         this.connectionController = connectionController;
 
     }
-    private void loadContacts(){
+    public void loadContacts(){
+        contactBox.getItems().clear();
         contactController.getAllContacts().forEach(c -> createContactBox(c.getIdCode()));
     }
     public void sendButtonAction(){
@@ -148,7 +149,7 @@ public class ChatViewController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getClassLoader().getResource("ContactComponent.fxml"));
             Object contactComponent = fxmlLoader.load();
             ContactComponentController contactController = (ContactComponentController)fxmlLoader.getController();
-            contactController.setChatViewController(this);
+            contactController.setChatViewController(this, this.contactController);
             contactController.setContactNameLabel(contactId);
             contactBox.getItems().add(contactComponent);
         }catch (IOException e){
