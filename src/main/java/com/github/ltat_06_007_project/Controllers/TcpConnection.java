@@ -1,5 +1,6 @@
 package com.github.ltat_06_007_project.Controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.ltat_06_007_project.Cryptography;
 import com.github.ltat_06_007_project.MainApplication;
 import com.github.ltat_06_007_project.Models.ChatModel;
@@ -18,9 +19,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.PublicKey;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 public class TcpConnection {
     private static final Logger log = LoggerFactory.getLogger(TcpConnection.class);
@@ -35,8 +38,8 @@ public class TcpConnection {
 
 
     private final LinkedBlockingQueue<MessageObject> messageQueue = new LinkedBlockingQueue<>();
-    private final Thread listenerThread;
     private final Thread senderThread;
+    private final Thread listenerThread;
 
     private Socket socket;
     private String contactId;
@@ -62,8 +65,8 @@ public class TcpConnection {
 
         this.socket = socket;
         this.executor = executor;
-        this.listenerThread = new Thread(this::startConnection);
-        this.senderThread = new Thread(this::send);
+        this.senderThread = new Thread(this::startConnection);
+        this.listenerThread = new Thread(this::receive);
 
         isIncoming = true;
 
@@ -77,19 +80,19 @@ public class TcpConnection {
 
         this.contactId = contactId;
         this.executor = executor;
-        this.listenerThread = new Thread(this::startConnection);
-        this.senderThread = new Thread(this::send);
+        this.senderThread = new Thread(this::startConnection);
+        this.listenerThread = new Thread(this::receive);
 
         isIncoming = false;
     }
 
     void start() {
-        executor.execute(listenerThread);
+        executor.execute(senderThread);
     }
 
     void close() {
-        listenerThread.interrupt();
         senderThread.interrupt();
+        listenerThread.interrupt();
         if (inputStream != null) {
             try {
                 inputStream.close();
@@ -158,16 +161,14 @@ public class TcpConnection {
             outputStream.flush();
             key = Cryptography.decryptAESKey(inputStream.readUTF(),MainApplication.privateKey);
             log.info("connection from {} has been secured, starting communication", contactId);
-            //TODO: sync states
-            chatViewController.connectionChanged(contactId,true);
-            online = true;
-            executor.execute(senderThread);
-            receive();
+            send();
         } else {
             log.info("denied connection to unauthorized id {}", contactId);
         }
 
     }
+
+
 
     private void outgoingConnection() throws IOException {
 
@@ -210,11 +211,7 @@ public class TcpConnection {
             outputStream.writeUTF(encryptedKey);
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);
-            chatViewController.connectionChanged(contactId,true);
-            online = true;
-            //TODO: sync states
-            executor.execute(senderThread);
-            receive();
+            send();
 
 
         } else {
@@ -223,30 +220,58 @@ public class TcpConnection {
     }
 
 
-    private void send() {
+    private void send()throws IOException  {
+
+        chatViewController.connectionChanged(contactId,true);
+        online = true;
+
+        List<String> localMessages = chatModel.getMessages().stream()
+                .filter(m -> m.getSenderId().equals(contactId))
+                .map(m->hashMessage(m))
+                .collect(Collectors.toList());
+
+        outputStream.writeUTF(MainApplication.mapper.writeValueAsString(localMessages));
+
+        TypeReference<List<String>> tr = new TypeReference<List<String>>(){};
+        List<String> theirMessages = MainApplication.mapper.readValue(inputStream.readUTF(),tr);
+
+        executor.execute(listenerThread);
+        chatModel.getMessages().stream()
+                .filter(m -> m.getSenderId().equals(contactId))
+                .filter(m -> !theirMessages.contains(hashMessage(m)))
+                .forEach(m -> {
+                    try {
+                        outputStream.writeUTF(MainApplication.mapper.writeValueAsString(m));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
         while (!Thread.interrupted()) {
-            try {
+            try{
                 MessageObject message = messageQueue.take();
                 String serializedMessage = MainApplication.mapper.writeValueAsString(message);
                 outputStream.writeUTF(Cryptography.encryptText(serializedMessage,key, "pass"));
                 outputStream.flush();
                 log.info("sent message to {}",contactId);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException e){
                 break;
-            } catch (IOException e) {
-                log.info("",e);
-                close();
             }
         }
     }
 
 
-    private void receive() throws IOException {
+    private void receive(){
         while (!Thread.interrupted()) {
-            String serializedMessage = Cryptography.decryptText(inputStream.readUTF(),key, "pass");
-            MessageObject message = MainApplication.mapper.readValue(serializedMessage, MessageObject.class);
-            chatViewController.insertMessage(chatModel.insertMessage(message));
-            log.info("received message from {}",contactId);
+            try {
+                String serializedMessage = Cryptography.decryptText(inputStream.readUTF(),key, "pass");
+                MessageObject message = MainApplication.mapper.readValue(serializedMessage, MessageObject.class);
+                chatViewController.insertMessage(chatModel.insertMessage(message));
+                log.info("received message from {}",contactId);
+            } catch (IOException e) {
+                log.info("",e);
+                close();
+            }
         }
     }
 
@@ -260,5 +285,9 @@ public class TcpConnection {
 
     boolean isOnline() {
         return online;
+    }
+
+    private static String hashMessage(MessageObject message) {
+        return "";
     }
 }
