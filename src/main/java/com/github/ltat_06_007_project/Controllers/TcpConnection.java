@@ -18,7 +18,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executor;
@@ -290,6 +294,13 @@ public class TcpConnection {
     }
 
     private static String hashMessage(MessageObject message) {
-        return "";
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            String messageSum =  message.getSenderId()+message.getReceiverId()+message.getContent();
+            byte[] encodedhash = digest.digest(messageSum.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(encodedhash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 }
