@@ -243,7 +243,7 @@ public class TcpConnection {
 
         executor.execute(listenerThread);
         chatModel.getMessages().stream()
-                .filter(m -> m.getSenderId().equals(contactId))
+                .filter(m -> m.getReceiverId().equals(contactId))
                 .filter(m -> !theirMessages.contains(hashMessage(m)))
                 .forEach(m -> {
                     try {
@@ -264,6 +264,8 @@ public class TcpConnection {
                 break;
             }
         }
+
+        close();
     }
 
 
@@ -276,9 +278,11 @@ public class TcpConnection {
                 log.info("received message from {}",contactId);
             } catch (IOException e) {
                 log.info("",e);
-                close();
+                break;
             }
         }
+
+        close();
     }
 
     void sendMessage(MessageObject messageObject) {
