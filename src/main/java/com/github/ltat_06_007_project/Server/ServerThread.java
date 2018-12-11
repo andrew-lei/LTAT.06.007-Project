@@ -26,7 +26,7 @@ public class ServerThread extends Thread {
             try {
                 ServerSocket serverSocket = new ServerSocket(Configuration.getServerPort());
                 Socket socket = serverSocket.accept();
-                SocketController socketController = new SocketController(socket);
+                SocketController socketController = new SocketController("",socket);
                 socketController.start();
             } catch (IOException e) {
                 e.printStackTrace();
