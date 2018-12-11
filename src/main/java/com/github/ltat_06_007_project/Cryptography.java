@@ -87,7 +87,7 @@ public class Cryptography {
     }
 
     static PrivateKey readPrivateKey(String filepath, String password) throws IOException {
-        Path path = Paths.get(filepath);
+        Path path = Paths.get(filepath + "/user.key");
         byte[] bytes = Files.readAllBytes(path);
 
         SecretKey key = new SecretKeySpec(hashString(password), "AES");
