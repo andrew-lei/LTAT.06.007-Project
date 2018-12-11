@@ -5,21 +5,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServerMessageObject {
     private final int messageType;
-    private final String socketId;
-    private final byte[] message;
+    private final String content;
+    private String socketId;
 
     @JsonCreator
-    public ServerMessageObject(@JsonProperty("messageType")int messageType, @JsonProperty("socketId")String socketId, @JsonProperty("message")byte[] message) {
+    public ServerMessageObject(@JsonProperty("messageType")int messageType,
+                               @JsonProperty("content")String content) {
         this.messageType = messageType;
-        this.socketId = socketId;
-        this.message = message;
+        this.content = content;
     }
+
+    public void setSocketId(String socketId) { this.socketId = socketId; }
 
     public int getMessageType() {
         return messageType;
     }
-    public String getSocketId() {
-        return socketId;
-    }
-    public byte[] getMessage(){ return message; }
+    public String getContent() { return content; }
+    public String getSocketId() { return socketId; }
 }
