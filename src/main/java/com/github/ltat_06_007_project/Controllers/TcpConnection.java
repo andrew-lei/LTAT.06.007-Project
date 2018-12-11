@@ -247,7 +247,7 @@ public class TcpConnection {
                 .filter(m -> !theirMessages.contains(hashMessage(m)))
                 .forEach(m -> {
                     try {
-                        outputStream.writeUTF(MainApplication.mapper.writeValueAsString(m));
+                        outputStream.writeUTF(Cryptography.encryptText(MainApplication.mapper.writeValueAsString(m),key, "pass"));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
