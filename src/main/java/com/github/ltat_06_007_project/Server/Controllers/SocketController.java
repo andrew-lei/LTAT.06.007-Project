@@ -45,8 +45,8 @@ public class SocketController extends Thread {
         while (!Thread.interrupted()) {
             try {
                 ServerMessageObject message = messageQueue.take();
-                byte[] serializedMessage = MainApplication.mapper.writeValueAsBytes(message);
-                String cypherText = Base64.getEncoder().encodeToString(Cryptography.encryptText(key, serializedMessage));
+                String serializedMessage = MainApplication.mapper.writeValueAsString(message);
+                String cypherText = Cryptography.encryptText(serializedMessage,key,"pass");
                 outputStream.writeUTF(cypherText);
                 outputStream.flush();
                 log.info("sent message to {}",socketId);
@@ -61,15 +61,10 @@ public class SocketController extends Thread {
 
     private void receive() throws IOException {
         while (!Thread.interrupted()) {
-            try {
-                byte[] cypherTextBytes = Base64.getDecoder().decode(inputStream.readUTF());
-                byte[] serializedMessage = Cryptography.decryptText(key, cypherTextBytes);
-                ServerMessageObject message = MainApplication.mapper.readValue(serializedMessage, ServerMessageObject.class);
-                // DO SOMETHING WITH MESSAGE
-                log.info("received message from {}",socketId);
-            } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
-                e.printStackTrace();
-            }
+            String serializedMessage = Cryptography.decryptText(inputStream.readUTF(),key,"pass");
+            ServerMessageObject message = MainApplication.mapper.readValue(serializedMessage, ServerMessageObject.class);
+            // DO SOMETHING WITH MESSAGE
+            log.info("received message from {}",socketId);
         }
     }
 

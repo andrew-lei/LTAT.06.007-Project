@@ -12,17 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.security.InvalidKeyException;
 import java.security.PublicKey;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -113,6 +108,7 @@ public class TcpConnection {
             try {
                 socket.close();
             } catch (IOException e) {
+
             }
         }
 
@@ -159,8 +155,7 @@ public class TcpConnection {
         if (optionalContactObject.get().isAllowed()) {
             outputStream.writeUTF(MainApplication.userIdCode);
             outputStream.flush();
-            byte[] encryptedKey = Base64.getDecoder().decode(inputStream.readUTF());
-            key = new SecretKeySpec(Cryptography.decryptBytes(MainApplication.privateKey,encryptedKey), "AES");
+            key = Cryptography.decryptAESKey(inputStream.readUTF(),MainApplication.privateKey);
             log.info("connection from {} has been secured, starting communication", contactId);
             //TODO: sync states
             online = true;
@@ -190,8 +185,8 @@ public class TcpConnection {
 
 
         log.info("established outgoing TCP connection with {}",socket.getInetAddress().getHostAddress());
-        Container contactPublicKeyContainer = Cryptography.containerFromB64Bytes(optionalContactObject.get().getPublicKey());
-        PublicKey contactPublicKey = Cryptography.keyFromBytes((contactPublicKeyContainer).getDataFiles().get(0).getBytes());
+        Container contactPublicKeyContainer = Cryptography.containerFromBytes(optionalContactObject.get().getPublicKey());
+        PublicKey contactPublicKey = Cryptography.publicKeyFromBytes((contactPublicKeyContainer).getDataFiles().get(0).getBytes());
         outputStream.writeUTF(MainApplication.userIdCode);
         outputStream.flush();
 
@@ -209,8 +204,8 @@ public class TcpConnection {
             if (!optionalContactObject.isPresent()) {
                 return;
             }
-            byte[] encryptedKey = Cryptography.encryptBytes(contactPublicKey, key.getEncoded());
-            outputStream.writeUTF(Base64.getEncoder().encodeToString(encryptedKey));
+            String encryptedKey = Cryptography.encryptAESKey(key,contactPublicKey);
+            outputStream.writeUTF(encryptedKey);
             outputStream.flush();
             log.info("connection to {} has been secured, starting communication", contactId);
             online = true;
@@ -229,9 +224,8 @@ public class TcpConnection {
         while (!Thread.interrupted()) {
             try {
                 MessageObject message = messageQueue.take();
-                byte[] serializedMessage = MainApplication.mapper.writeValueAsBytes(message);
-                String cypherText = Base64.getEncoder().encodeToString(Cryptography.encryptText(key, serializedMessage));
-                outputStream.writeUTF(cypherText);
+                String serializedMessage = MainApplication.mapper.writeValueAsString(message);
+                outputStream.writeUTF(Cryptography.encryptText(serializedMessage,key, "pass"));
                 outputStream.flush();
                 log.info("sent message to {}",contactId);
             } catch (InterruptedException e) {
@@ -246,15 +240,10 @@ public class TcpConnection {
 
     private void receive() throws IOException {
         while (!Thread.interrupted()) {
-            try {
-                byte[] cypherTextBytes = Base64.getDecoder().decode(inputStream.readUTF());
-                byte[] serializedMessage = Cryptography.decryptText(key, cypherTextBytes);
-                MessageObject message = MainApplication.mapper.readValue(serializedMessage, MessageObject.class);
-                chatViewController.insertMessage(chatModel.insertMessage(message));
-                log.info("received message from {}",contactId);
-            } catch (BadPaddingException | IllegalBlockSizeException | InvalidKeyException e) {
-                e.printStackTrace();
-            }
+            String serializedMessage = Cryptography.decryptText(inputStream.readUTF(),key, "pass");
+            MessageObject message = MainApplication.mapper.readValue(serializedMessage, MessageObject.class);
+            chatViewController.insertMessage(chatModel.insertMessage(message));
+            log.info("received message from {}",contactId);
         }
     }
 
@@ -266,7 +255,7 @@ public class TcpConnection {
         }
     }
 
-    public boolean isOnline() {
+    boolean isOnline() {
         return online;
     }
 }

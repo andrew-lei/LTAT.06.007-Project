@@ -156,7 +156,7 @@ public class Cryptography {
         }
     }
 
-    String encryptAESKey(SecretKey secretKey, PublicKey publicKey) {
+    public static String encryptAESKey(SecretKey secretKey, PublicKey publicKey) {
         byte[] keyBytes = secretKey.getEncoded();
         try {
             Cipher cipher = Cipher.getInstance("RSA");
@@ -166,7 +166,7 @@ public class Cryptography {
         }
     }
 
-    SecretKey decryptAESKey(String cipherText, PrivateKey key) {
+    public static SecretKey decryptAESKey(String cipherText, PrivateKey key) {
         byte[] encryptedKey = Base64.getDecoder().decode(cipherText);
         try {
             Cipher cipher = Cipher.getInstance("RSA");
