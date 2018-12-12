@@ -57,7 +57,7 @@ public class MessageRepository {
     }
 
     public List<MessageObject> getAllMessages(){
-        String sql = "SELECT * FROM message";
+        String sql = "SELECT * FROM message ORDER BY messageSentTime ASC";
 
         try (Connection connection = DriverManager.getConnection(databaseAddress);
              Statement statement = connection.createStatement()) {
