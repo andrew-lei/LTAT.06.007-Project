@@ -73,7 +73,7 @@
                         <HBox>
                            <children>
                               <Region HBox.hgrow="ALWAYS" />
-                              <Label fx:id="onlineStatus" alignment="CENTER_RIGHT" contentDisplay="RIGHT" opacity="0.9" text="Online" textAlignment="CENTER" textFill="#3f72af">
+                              <Label fx:id="onlineStatus" alignment="CENTER_RIGHT" contentDisplay="RIGHT" opacity="0.9" textAlignment="CENTER" textFill="#3f72af">
                                  <font>
                                     <Font name="SansSerif Regular" size="16.0" />
                                  </font>
