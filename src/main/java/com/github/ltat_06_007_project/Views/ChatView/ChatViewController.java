@@ -108,7 +108,7 @@ public class ChatViewController implements Initializable {
 
     public void setContact(String contactId) {
         currentContact = contactId;
-        participants.setText(contactId);
+        participants.setText(contactController.getName(contactId));
         chatBox.getItems().clear();
         setOnlineStatus(contactId);
         loadOutput();
