@@ -2,10 +2,15 @@ package com.github.ltat_06_007_project.Server.Controllers;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.github.ltat_06_007_project.Configuration;
+import com.github.ltat_06_007_project.Cryptography;
 import com.github.ltat_06_007_project.MainApplication;
+import com.github.ltat_06_007_project.Models.ContactModel;
 import com.github.ltat_06_007_project.Server.Objects.ContactRequest;
 import com.github.ltat_06_007_project.Server.Objects.MessageRelay;
+import com.github.ltat_06_007_project.Server.Objects.PublicKeyShare;
 import com.github.ltat_06_007_project.Server.Objects.ServerMessageObject;
+import org.digidoc4j.Container;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,7 @@ public class ServerConnectionController{
     private final ConcurrentHashMap<String, SocketController> idToController = new ConcurrentHashMap<>();
     private final LinkedBlockingQueue<ServerMessageObject> inbox = new LinkedBlockingQueue<>();
     private final Executor executor = Executors.newCachedThreadPool();
+    private final ContactModel contactModel;
 
     boolean socketIdExsists(String socketId){
         return idToController.containsKey(socketId);
@@ -32,14 +38,16 @@ public class ServerConnectionController{
 
 
     @Autowired
-    public ServerConnectionController() {
+    public ServerConnectionController(ContactModel contactModel) {
+        this.contactModel = contactModel;
+
         new Thread(this::listenForConnections).start();
         new Thread(this::handleInbox).start();
     }
 
     private void listenForConnections() {
         while (!Thread.interrupted()) {
-            try (ServerSocket serverSocket = new ServerSocket(42069)) {
+            try (ServerSocket serverSocket = new ServerSocket(Configuration.getServerPort())) {
                 Socket socket = serverSocket.accept();
                 new SocketController(socket, this, executor).start();
             } catch (IOException e) {
@@ -86,11 +94,17 @@ public class ServerConnectionController{
                 String fromSocket = message.getSocketId();
 
                 if (message.getMessageType() == 0) {
+                    PublicKeyShare publicKeyShare =
+                            MainApplication.mapper.readValue(message.getContent(), PublicKeyShare.class);
+                    Container container = Cryptography.containerFromBytes(publicKeyShare.getPublicKey());
+                    String id = Cryptography.getSignerInfo(container).get(0);
+                    contactModel.updatePublicKey(id, publicKeyShare.getPublicKey());
+                    log.info("Updated public key from {}", id);
 
-                    log.info("PublicKeyShare");
                 } else if (message.getMessageType() == 1) {
 
                     log.info("PublicKeyAdvertisment");
+
                 } else if (message.getMessageType() == 2) {
 
                     log.info("PublicKeyRequest");
@@ -100,8 +114,8 @@ public class ServerConnectionController{
                     log.info("Contact request from {}", fromSocket);
 
                 } else if (message.getMessageType() == 4) {
-                    MessageRelay messageRelay = MainApplication.mapper
-                            .readValue(message.getContent(), MessageRelay.class);
+                    MessageRelay messageRelay =
+                            MainApplication.mapper.readValue(message.getContent(), MessageRelay.class);
                     String targetSocket = messageRelay.getSocketId();
                     messageRelay.setSocketId(fromSocket);
                     message.setSocketId(targetSocket);

@@ -125,7 +125,7 @@ public class Cryptography {
         }
     }
 
-    static List<String> getSignerInfo(Container container) {
+    public static List<String> getSignerInfo(Container container) {
         List<String> retList = new ArrayList<>();
         Signature signature = container.getSignatures().get(0);
         X509Cert certificate = signature.getSigningCertificate();
