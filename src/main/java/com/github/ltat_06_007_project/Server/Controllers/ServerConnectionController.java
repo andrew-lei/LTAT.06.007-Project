@@ -85,8 +85,7 @@ public class ServerConnectionController{
 
 
     public void addToInbox(ServerMessageObject messageObject) { inbox.add(messageObject); }
-
-    // TODO
+    
     private void handleInbox() {
         while (!Thread.interrupted()) {
             try {
