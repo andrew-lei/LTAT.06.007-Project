@@ -35,7 +35,6 @@ public class CreateUserViewController {
     }
     @FXML
     void createAccount(ActionEvent event) throws Exception {
-        //Todo:create user keys etc.
         try{
             char[] pin = pinField.getText().toCharArray();
             String password = passwordField.getText();

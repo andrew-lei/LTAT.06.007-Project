@@ -46,7 +46,6 @@ public class LoginViewController {
 
     @FXML
     void loginAction(ActionEvent event)throws Exception {
-        //ToDo: handle exception
         try{
             String password = passwordField.getText();
             if(password == null || password.isEmpty()){
